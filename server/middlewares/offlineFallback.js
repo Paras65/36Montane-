@@ -271,19 +271,29 @@ const offlineFallback = (req, res, next) => {
 
   // POST /booking
   if (method === 'POST' && path === '/booking') {
-    const { name, email, numberOfPeople, tripId } = body;
-    if (!name || !email || !numberOfPeople || !tripId) {
-      return res.status(400).json({ error: 'Name, email, numberOfPeople, and tripId are required' });
+    const { name, email, numberOfPeople, groupSize, tripId, service, serviceName, phone, travelDate, date, totalPrice, status } = body;
+    if (!name || !email) {
+      return res.status(400).json({ error: 'Name and email are required' });
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(String(email).trim())) {
       return res.status(400).json({ error: 'Invalid email address format' });
     }
+    let peopleCount = parseInt(numberOfPeople || groupSize, 10);
+    if (isNaN(peopleCount) || peopleCount < 1) peopleCount = 1;
+
     const booking = {
       _id: `6581f1b2c45e12345678${Date.now().toString().slice(-4)}`,
-      status: 'Confirmed',
+      name: String(name).trim(),
+      email: String(email).trim().toLowerCase(),
+      phone: phone ? String(phone).trim() : '',
+      numberOfPeople: peopleCount,
+      tripId: tripId || serviceName || service || '36-montane-adventure',
+      serviceName: serviceName || service || '',
+      travelDate: travelDate || date || '',
+      totalPrice: Number(totalPrice) || 0,
+      status: status || 'Confirmed',
       bookingDate: new Date(),
-      ...body
     };
     inMemoryBookings.unshift(booking);
     return res.status(201).json({ message: 'Booking confirmed', booking });

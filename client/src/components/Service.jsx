@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { mockServices } from '../data/mockData';
+import { generateOwnerWhatsAppUrl } from '../utils/whatsapp';
 
 // Categories for filtering
 const categories = [
@@ -53,7 +54,8 @@ const ServicesAndTrips = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-  const [bookingDetails, setBookingDetails] = useState({ name: '', email: '', serviceOrTrip: '', itemName: '' });
+  const [bookingDetails, setBookingDetails] = useState({ name: '', email: '', phone: '', serviceOrTrip: '', itemName: '' });
+  const [confirmedBooking, setConfirmedBooking] = useState(null);
 
   // Fetch data function with improved API binding
   const fetchData = useCallback(async () => {
@@ -102,13 +104,15 @@ const ServicesAndTrips = () => {
   );
 
   const handleBooking = (itemType, itemName) => {
-    setBookingDetails({ ...bookingDetails, serviceOrTrip: itemType, itemName: itemName });
+    setBookingDetails({ name: '', email: '', phone: '', serviceOrTrip: itemType, itemName: itemName });
+    setConfirmedBooking(null);
+    setError(null);
     setIsBookingModalOpen(true);
   };
 
-  const handleBookingSubmit = () => {
+  const handleBookingSubmit = async () => {
     if (!bookingDetails.name || !bookingDetails.email) {
-      setError("Please fill out all the fields.");
+      setError("Please fill out your name and email.");
       return;
     }
 
@@ -118,16 +122,34 @@ const ServicesAndTrips = () => {
       return;
     }
 
-    // Replace alert with toast notification
-    toast.success(`Booking confirmed for ${bookingDetails.itemName} (${bookingDetails.serviceOrTrip}).`);
+    try {
+      const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+      const payload = {
+        name: bookingDetails.name,
+        email: bookingDetails.email,
+        phone: bookingDetails.phone,
+        numberOfPeople: 1,
+        service: bookingDetails.itemName,
+        serviceName: `${bookingDetails.itemName} (${bookingDetails.serviceOrTrip || 'Service'})`,
+        travelDate: new Date().toISOString().split('T')[0],
+        totalPrice: 0,
+      };
 
-    setIsBookingModalOpen(false);
-    setError(null);
+      await axios.post(`${baseUrl}/api/booking`, payload);
+      toast.success(`Booking confirmed for ${bookingDetails.itemName}!`);
+      setConfirmedBooking(payload);
+      setError(null);
+    } catch (err) {
+      console.error('Service booking error:', err);
+      setError(err.response?.data?.error || err.response?.data?.message || 'Failed to submit booking');
+      toast.error('Booking submission failed. Please try again.');
+    }
   };
 
   const handleModalClose = () => {
     setIsBookingModalOpen(false);
-    setError(null); // Reset error when modal is closed
+    setError(null);
+    setConfirmedBooking(null);
   };
 
   const handleChange = (e) => {
@@ -176,44 +198,98 @@ const ServicesAndTrips = () => {
       </div>
 
       {isBookingModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg w-96">
-            <h3 className="text-2xl mb-4">Booking for {bookingDetails.itemName}</h3>
-            <form>
-              <input
-                type="text"
-                name="name"
-                placeholder="Your Name"
-                value={bookingDetails.name}
-                onChange={handleChange}
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
-              />
-              <input
-                type="email"
-                name="email"
-                placeholder="Your Email"
-                value={bookingDetails.email}
-                onChange={handleChange}
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
-              />
-              {error && <div className="text-red-600 text-sm mb-2">{error}</div>}
-              <div className="flex justify-between">
-                <button
-                  type="button"
-                  onClick={handleModalClose}
-                  className="px-4 py-2 bg-gray-300 rounded"
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  onClick={handleBookingSubmit}
-                  className="px-4 py-2 bg-green-600 text-white rounded"
-                >
-                  Confirm Booking
-                </button>
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white p-6 rounded-2xl max-w-md w-full shadow-2xl">
+            {confirmedBooking ? (
+              <div className="text-center">
+                <div className="w-14 h-14 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl font-bold">
+                  ✓
+                </div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">Booking Confirmed!</h3>
+                <p className="text-sm text-gray-600 mb-5">
+                  Thank you, <span className="font-semibold text-gray-800">{confirmedBooking.name}</span>! Your request for <span className="font-semibold text-green-700">{confirmedBooking.serviceName}</span> has been received.
+                </p>
+
+                <div className="space-y-3">
+                  <a
+                    href={generateOwnerWhatsAppUrl(confirmedBooking)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-3 px-4 bg-[#25D366] hover:bg-[#1ebe5b] text-white font-bold rounded-xl flex items-center justify-center gap-2 text-sm shadow-md transition hover:scale-[1.02]"
+                  >
+                    <span>💬</span>
+                    <span>Send Booking to Guide on WhatsApp</span>
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={handleModalClose}
+                    className="w-full py-2 text-xs text-gray-500 hover:text-gray-800 font-medium"
+                  >
+                    Close & Return
+                  </button>
+                </div>
               </div>
-            </form>
+            ) : (
+              <div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">Book {bookingDetails.itemName}</h3>
+                <form onSubmit={(e) => { e.preventDefault(); handleBookingSubmit(); }}>
+                  <div className="mb-3">
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Your Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="Enter your name"
+                      value={bookingDetails.name}
+                      onChange={handleChange}
+                      className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Email Address</label>
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="Enter your email"
+                      value={bookingDetails.email}
+                      onChange={handleChange}
+                      className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                      required
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Phone / WhatsApp Number</label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      placeholder="e.g. +91 98765 43210"
+                      value={bookingDetails.phone}
+                      onChange={handleChange}
+                      className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+
+                  {error && <div className="text-red-600 text-xs mb-3">{error}</div>}
+
+                  <div className="flex justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={handleModalClose}
+                      className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700 transition"
+                    >
+                      Confirm Booking
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
           </div>
         </div>
       )}

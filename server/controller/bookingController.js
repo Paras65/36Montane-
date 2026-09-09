@@ -3,7 +3,7 @@ const Booking = require('../models/Booking');
 // GET all bookings
 const getAllBookings = async (req, res) => {
     try {
-        const bookings = await Booking.find().populate('tripId').sort({ bookingDate: -1 });
+        const bookings = await Booking.find().sort({ bookingDate: -1 });
         res.status(200).json(bookings || []);
     } catch (err) {
         console.error('getAllBookings error:', err);
@@ -13,15 +13,24 @@ const getAllBookings = async (req, res) => {
 
 // CREATE a booking
 const createBooking = async (req, res) => {
-    const { name, email, numberOfPeople, tripId, status } = req.body;
+    const { name, email, numberOfPeople, groupSize, tripId, service, serviceName, phone, travelDate, date, totalPrice, status } = req.body;
 
-    if (!name || !email || !numberOfPeople || !tripId) {
-        return res.status(400).json({ error: "Name, email, numberOfPeople, and tripId are required" });
+    if (!name || !email) {
+        return res.status(400).json({ error: "Name and email are required" });
     }
 
     const trimmedName = String(name).trim();
     const trimmedEmail = String(email).trim().toLowerCase();
-    const peopleCount = parseInt(numberOfPeople, 10);
+    const trimmedPhone = phone ? String(phone).trim() : '';
+    const resolvedTravelDate = travelDate || date || '';
+    const resolvedServiceName = serviceName || service || '';
+    const resolvedTripId = tripId || resolvedServiceName || '36-montane-adventure';
+
+    // Parse group size
+    let peopleCount = parseInt(numberOfPeople || groupSize, 10);
+    if (isNaN(peopleCount) || peopleCount < 1) {
+        peopleCount = 1;
+    }
 
     if (trimmedName.length > 100) {
         return res.status(400).json({ error: "Name cannot exceed 100 characters" });
@@ -32,10 +41,6 @@ const createBooking = async (req, res) => {
         return res.status(400).json({ error: "Invalid email address format" });
     }
 
-    if (isNaN(peopleCount) || peopleCount < 1 || peopleCount > 100) {
-        return res.status(400).json({ error: "Number of people must be a valid number between 1 and 100" });
-    }
-
     const allowedStatuses = ['Confirmed', 'Pending', 'Cancelled'];
     const bookingStatus = allowedStatuses.includes(status) ? status : 'Confirmed';
 
@@ -43,8 +48,12 @@ const createBooking = async (req, res) => {
         const booking = new Booking({
             name: trimmedName,
             email: trimmedEmail,
+            phone: trimmedPhone,
             numberOfPeople: peopleCount,
-            tripId,
+            tripId: resolvedTripId,
+            serviceName: resolvedServiceName,
+            travelDate: resolvedTravelDate,
+            totalPrice: Number(totalPrice) || 0,
             status: bookingStatus,
             bookingDate: new Date()
         });

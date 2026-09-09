@@ -1,4 +1,8 @@
 import { useState, useEffect } from 'react';
+import {
+  generateCustomerWhatsAppUrl,
+  generateContactReplyWhatsAppUrl,
+} from '../../utils/whatsapp';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -907,8 +911,9 @@ const AdminDashboard = () => {
                   <thead className="bg-slate-800/70 border-b border-slate-800 text-slate-400 uppercase tracking-wider text-[10px]">
                     <tr>
                       <th className="p-3.5">Customer</th>
-                      <th className="p-3.5">Contact Email</th>
-                      <th className="p-3.5">Group Size</th>
+                      <th className="p-3.5">Contact / Phone</th>
+                      <th className="p-3.5">Service / Trip</th>
+                      <th className="p-3.5">Group</th>
                       <th className="p-3.5">Status</th>
                       <th className="p-3.5">Date</th>
                       <th className="p-3.5 text-right">Actions</th>
@@ -918,7 +923,16 @@ const AdminDashboard = () => {
                     {bookings.map((booking) => (
                       <tr key={booking._id} className="hover:bg-slate-800/40 transition">
                         <td className="p-3.5 font-semibold text-white">{booking.name}</td>
-                        <td className="p-3.5 text-slate-300">{booking.email}</td>
+                        <td className="p-3.5 text-slate-300">
+                          <div>{booking.email}</div>
+                          {booking.phone && (
+                            <span className="text-[11px] text-emerald-400 font-mono">{booking.phone}</span>
+                          )}
+                        </td>
+                        <td className="p-3.5 text-slate-300">
+                          <span className="font-medium text-white">{booking.serviceName || booking.tripTitle || booking.service || 'Adventure Trip'}</span>
+                          {booking.totalPrice ? <div className="text-[11px] text-emerald-400 font-semibold">₹{booking.totalPrice}</div> : null}
+                        </td>
                         <td className="p-3.5 text-slate-300">{booking.numberOfPeople} Persons</td>
                         <td className="p-3.5">
                           <button
@@ -936,15 +950,29 @@ const AdminDashboard = () => {
                           </button>
                         </td>
                         <td className="p-3.5 text-slate-400 text-[11px]">
-                          {new Date(booking.bookingDate).toLocaleDateString()}
+                          {booking.travelDate || (booking.bookingDate ? new Date(booking.bookingDate).toLocaleDateString() : 'N/A')}
                         </td>
                         <td className="p-3.5 text-right">
-                          <button
-                            onClick={() => handleDeleteBooking(booking._id)}
-                            className="px-2.5 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs transition"
-                          >
-                            Cancel & Remove
-                          </button>
+                          <div className="flex items-center justify-end gap-2">
+                            {booking.phone && (
+                              <a
+                                href={generateCustomerWhatsAppUrl(booking)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="Send booking confirmation to customer via WhatsApp"
+                                className="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1 transition"
+                              >
+                                <span>💬</span>
+                                <span>WhatsApp</span>
+                              </a>
+                            )}
+                            <button
+                              onClick={() => handleDeleteBooking(booking._id)}
+                              className="px-2.5 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs transition"
+                            >
+                              Cancel
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -1102,12 +1130,26 @@ const AdminDashboard = () => {
                       Received: {new Date(c.createdAt || Date.now()).toLocaleString()}
                     </p>
                   </div>
-                  <button
-                    onClick={() => handleDeleteContact(c._id)}
-                    className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs rounded-xl transition self-start sm:self-center"
-                  >
-                    Delete
-                  </button>
+                  <div className="flex items-center gap-2 self-start sm:self-center">
+                    {c.phone && (
+                      <a
+                        href={generateContactReplyWhatsAppUrl(c)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Reply to inquiry on WhatsApp"
+                        className="px-3 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 text-xs font-semibold rounded-xl flex items-center gap-1.5 transition"
+                      >
+                        <span>💬</span>
+                        <span>Reply on WhatsApp</span>
+                      </a>
+                    )}
+                    <button
+                      onClick={() => handleDeleteContact(c._id)}
+                      className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs rounded-xl transition"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               ))
             )}

@@ -1,16 +1,19 @@
 const mongoose = require('mongoose');
 
-// Define the schema for Booking
+// Flexible schema for adventure bookings
 const bookingSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
-  numberOfPeople: { type: Number, required: true },
-  tripId: { type: mongoose.Schema.Types.ObjectId, ref: 'Trip', required: true }, // Reference to the Trip model
+  phone: { type: String },
+  numberOfPeople: { type: Number, required: true, default: 1 },
+  tripId: { type: mongoose.Schema.Types.Mixed }, // Supports ObjectId or string service/trip name
+  serviceName: { type: String },
+  travelDate: { type: String },
+  totalPrice: { type: Number },
   status: { type: String, default: 'Confirmed' },
   bookingDate: { type: Date, default: Date.now }
 });
 
-// Create a model for the Booking schema
 const Booking = mongoose.model('Booking', bookingSchema);
 
 module.exports = Booking;

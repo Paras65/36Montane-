@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const TripDetailPage = () => {
   const { id } = useParams(); // Get the 'id' from the URL params
+  const navigate = useNavigate();
   const [tripData, setTripData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -95,11 +96,18 @@ const TripDetailPage = () => {
       {/* Action Section */}
       <section className="bg-gray-100 text-gray-800 py-12 text-center">
         <h2 className="text-2xl font-semibold mb-6">Ready to embark on the adventure?</h2>
-        <a href={tripData.bookingLink} target="_blank" rel="noopener noreferrer">
-          <button className="bg-blue-600 text-white py-3 px-8 rounded-lg text-lg font-bold shadow-md hover:bg-blue-500 transition">
-            Book Your Trip
-          </button>
-        </a>
+        <button
+          onClick={() => {
+            if (tripData.bookingLink && tripData.bookingLink.startsWith('http')) {
+              window.open(tripData.bookingLink, '_blank', 'noopener,noreferrer');
+            } else {
+              navigate('/detail', { state: tripData });
+            }
+          }}
+          className="bg-blue-600 text-white py-3 px-8 rounded-lg text-lg font-bold shadow-md hover:bg-blue-500 transition"
+        >
+          Book Your Trip
+        </button>
       </section>
     </div>
   );

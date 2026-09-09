@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { isValidPhoneNumber } from "libphonenumber-js";
 import { useLocation } from "react-router-dom";
 import { mockFeaturedTrips } from "../data/mockData";
+import { generateOwnerWhatsAppUrl } from "../utils/whatsapp";
 
 const BookingDetail = () => {
   const location = useLocation();
@@ -123,25 +124,65 @@ const BookingDetail = () => {
     setErrors(newErrors);
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      console.log("Booking Submitted:", formData);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [confirmedBooking, setConfirmedBooking] = useState(null);
 
-      const successMessage = `Booking for ${formData.name} (${formData.groupSize} people) on ${formData.date} has been successfully submitted! Total price: ₹${totalPrice}`;
-      toast.success(successMessage, {
-        onClose: () => {
-          setFormData({
-            name: "",
-            email: "",
-            phone: "",
-            groupSize: "1",
-            date: "",
-          });
-          setTotalPrice(baseNumericPrice);
-        },
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+    try {
+      const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+      const groupCount =
+        formData.groupSize === "2-5"
+          ? 3
+          : formData.groupSize === "6-10"
+          ? 8
+          : formData.groupSize === "Private"
+          ? 2
+          : 1;
+
+      const payload = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        numberOfPeople: groupCount,
+        groupDisplay: formData.groupSize,
+        tripId: tripDetails._id || tripDetails.id || '6581f1b2c45e123456789001',
+        serviceName: tripDetails.title || 'Mountain Adventure',
+        travelDate: formData.date,
+        totalPrice: totalPrice,
+      };
+
+      const res = await fetch(`${baseUrl}/api/booking`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || data.message || 'Failed to submit booking');
+      }
+
+      setConfirmedBooking(payload);
+      toast.success('🎉 Booking confirmed! Send details via WhatsApp to connect with your guide.');
+
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        groupSize: "1",
+        date: "",
+      });
+      setTotalPrice(baseNumericPrice);
+    } catch (err) {
+      console.error('Booking submission error:', err);
+      toast.error(err.message || 'Error submitting booking. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -261,13 +302,66 @@ const BookingDetail = () => {
 
             <button
               type="submit"
-              className="w-full bg-green-600 text-white py-3 rounded-lg mt-6 font-bold transition-all hover:bg-green-700"
+              disabled={isSubmitting}
+              className={`w-full bg-green-600 text-white py-3 rounded-lg mt-6 font-bold transition-all hover:bg-green-700 ${
+                isSubmitting ? 'opacity-60 cursor-not-allowed' : ''
+              }`}
             >
-              Book Now
+              {isSubmitting ? 'Confirming Booking...' : 'Book Now'}
             </button>
           </form>
         </div>
       </div>
+
+      {/* WhatsApp Booking Confirmation Modal */}
+      {confirmedBooking && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-emerald-100 text-center animate-in fade-in zoom-in duration-200">
+            <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">
+              ✓
+            </div>
+            
+            <h3 className="text-2xl font-extrabold text-gray-900 mb-2">Booking Confirmed!</h3>
+            <p className="text-sm text-gray-600 mb-6">
+              Thank you, <span className="font-semibold text-gray-800">{confirmedBooking.name}</span>! Your booking for <span className="font-semibold text-emerald-700">{confirmedBooking.serviceName}</span> is saved in our system.
+            </p>
+
+            <div className="bg-gray-50 rounded-xl p-4 text-left text-xs space-y-2 mb-6 border border-gray-100">
+              <div className="flex justify-between text-gray-600">
+                <span>Travel Date:</span>
+                <span className="font-semibold text-gray-800">{confirmedBooking.travelDate || 'TBD'}</span>
+              </div>
+              <div className="flex justify-between text-gray-600">
+                <span>Group Size:</span>
+                <span className="font-semibold text-gray-800">{confirmedBooking.groupDisplay || `${confirmedBooking.numberOfPeople} Persons`}</span>
+              </div>
+              <div className="flex justify-between text-gray-600">
+                <span>Total Price:</span>
+                <span className="font-bold text-emerald-600 text-sm">₹{confirmedBooking.totalPrice}</span>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <a
+                href={generateOwnerWhatsAppUrl(confirmedBooking)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-3.5 px-4 bg-[#25D366] hover:bg-[#1ebe5b] text-white font-bold rounded-xl flex items-center justify-center gap-2 text-sm shadow-md shadow-emerald-500/20 transition hover:scale-[1.02]"
+              >
+                <span>💬</span>
+                <span>Send Booking to Guide on WhatsApp</span>
+              </a>
+
+              <button
+                onClick={() => setConfirmedBooking(null)}
+                className="w-full py-2.5 text-xs text-gray-500 hover:text-gray-800 font-medium transition"
+              >
+                Close & Return
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
