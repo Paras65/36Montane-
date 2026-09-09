@@ -1,0 +1,96 @@
+.testimonial-container {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    background-color: #f7f7f7; /* Light grey background */
+}
+
+.testimonial-card {
+    background-color: #ffffff; /* White background for the card */
+    color: #333333; /* Dark grey text for better readability */
+    max-width: 600px;
+    width: 100%;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Softer shadow for a subtle floating effect */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effects */
+}
+
+.testimonial-card:hover {
+    transform: translateY(-8px); /* Slight hover lift */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover */
+}
+
+.testimonial-image img {
+    width: 100%; /* Make the image take up the full width of its container */
+    height: auto; /* Maintain the aspect ratio */
+    max-width: 140px; /* Ensure the image doesn't get too large */
+    max-height: 140px; /* Max height for the image */
+    object-fit: cover; /* Ensure the image fills the circle, cropping if necessary */
+    border-radius: 50%; /* Circular image */
+    margin: 20px;
+}
+
+.testimonial-content {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.testimonial-text {
+    font-style: italic;
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    color: #666666; /* Lighter grey for text */
+}
+
+.testimonial-author {
+    display: flex;
+    flex-direction: column;
+}
+
+.author-name {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333333; /* Dark grey for author name */
+}
+
+.author-location {
+    font-size: 14px;
+    color: #888888; /* Lighter grey for the location */
+    margin-top: 5px;
+    font-style: italic;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    .testimonial-card {
+        flex-direction: column; /* Stack the image and content vertically on smaller screens */
+        align-items: center; /* Center content */
+    }
+
+    .testimonial-image img {
+        max-width: 160px; /* Slightly larger image for tablets */
+        margin-bottom: 15px; /* Add some space below the image */
+    }
+}
+
+@media (max-width: 480px) {
+    .testimonial-text {
+        font-size: 16px; /* Reduce font size for smaller screens */
+    }
+
+    .author-name {
+        font-size: 18px; /* Reduce the author's name font size */
+    }
+
+    .author-location {
+        font-size: 12px; /* Reduce the location font size */
+    }
+
+    .testimonial-image img {
+        max-width: 160px; /* Increased image size for smaller screens */
+    }
+}

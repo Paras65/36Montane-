@@ -1,0 +1,33 @@
+# Node modules
+node_modules
+npm-debug.log
+
+# Logs
+logs
+*.log
+*.gz
+
+# Environment variables
+.env
+
+# Temporary files
+tmp
+*.tmp
+
+# Build artifacts
+dist
+build
+
+# Docker files
+Dockerfile*
+.dockerignore
+
+# IDE and editor files
+.vscode
+*.swp
+*.swo
+*.idea
+
+# OS generated files
+.DS_Store
+Thumbs.db

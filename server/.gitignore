@@ -1,0 +1,22 @@
+# Node modules
+/node_modules/
+
+# Environment variable files
+.env
+
+
+# Logs
+*.log
+
+# IDE/editor files
+.vscode/
+.idea/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Build and dist folders
+/dist/
+/build/
+.vercel

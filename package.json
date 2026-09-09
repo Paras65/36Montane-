@@ -1,0 +1,28 @@
+{
+  "name": "36montane",
+  "version": "1.0.0",
+  "description": "36 Montane - Outdoor Camping, Trekking & Adventure Platform with Admin Dashboard",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n \"SERVER,CLIENT\" -c \"cyan,green\" \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:client": "npm run dev --prefix client",
+    "dev:server": "npm run dev --prefix server",
+    "build": "npm run build --prefix client",
+    "seed": "npm run seed --prefix server",
+    "install:all": "npm install && npm install --prefix server && npm install --prefix client"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "keywords": [
+    "camping",
+    "trekking",
+    "adventure",
+    "react",
+    "express",
+    "mongodb",
+    "admin-dashboard"
+  ],
+  "author": "36 Montane",
+  "license": "ISC"
+}

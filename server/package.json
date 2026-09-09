@@ -1,0 +1,42 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "API for 36 Montane",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node main.js",
+    "dev": "node --watch main.js",
+    "seed": "node seed.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Paras65/init.git"
+  },
+  "keywords": [
+    "camping",
+    "trakking",
+    "mountain"
+  ],
+  "author": "paras",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Paras65/init/issues"
+  },
+  "homepage": "https://github.com/Paras65/init#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.1.0",
+    "hpp": "^0.2.3",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.0",
+    "xss-clean": "^0.1.4"
+  }
+}
