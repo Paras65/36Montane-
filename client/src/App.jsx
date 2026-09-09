@@ -17,6 +17,7 @@ import Tripdetail from './components/Tripdetail';
 import Gallery from './components/Gallery';
 import Event from './components/Event';
 import Blogs from './components/Blog';
+import CorporateOffsite from './components/CorporateOffsite';
 import AdminLayout from './layouts/AdminLayout';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -45,6 +46,7 @@ const App = () => {
           <Route path='/contact' element={<Contact />} />
           <Route path='/Contact' element={<Navigate to="/contact" replace />} />
           <Route path='/blogs' element={<Blogs />} />
+          <Route path='/corporate' element={<CorporateOffsite />} />
           <Route path='/detail' element={<Detail />} />
           <Route path='/Detail' element={<Detail />} />
           <Route path='/tripdetail/:id' element={<Tripdetail />} />

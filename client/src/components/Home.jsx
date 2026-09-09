@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 import FAQComponent from "./Faq";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SpinnerWithIcon from "./SpinnerWithIcon";
@@ -238,6 +238,44 @@ const Homepage = () => {
               <p className="text-xs text-stone-600 leading-relaxed">
                 Savor traditional local flavors: steamed *Fara*, crispy *Chila*, local chutneys, and piping hot chai brewed over jungle firewood.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ==================== CORPORATE OFFSITES & TEAM RETREATS BANNER ==================== */}
+      <section className="py-14 bg-[#142E23] text-white border-y border-[#2D6A4F]/60 relative overflow-hidden">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl relative z-10">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div className="max-w-2xl">
+              <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#C84B31]/30 border border-amber-400/40 text-amber-200 text-xs font-semibold uppercase tracking-wider mb-3">
+                <span>💼 FOR COMPANIES & TEAMS</span>
+              </span>
+              <h3 className="text-2xl sm:text-3xl font-extrabold font-serif text-white">
+                Wilderness Offsites & Leadership Retreats in Chhattisgarh
+              </h3>
+              <p className="text-xs sm:text-sm text-amber-100/80 mt-2 leading-relaxed">
+                Take your team away from screens. Exclusive private campsites, experiential Baiga survival challenges, outdoor projector townhall setups, and official GST invoicing. Up to 20% group discounts for 15+ members.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full lg:w-auto">
+              <NavLink
+                to="/corporate"
+                className="w-full sm:w-auto px-6 py-3.5 bg-[#C84B31] hover:bg-[#9E321C] text-white font-bold rounded-xl text-xs text-center shadow-lg transition hover:scale-105 border border-amber-400/30"
+              >
+                Explore Packages & Instant Calculator
+              </NavLink>
+              <a
+                href={`https://wa.me/${ownerWhatsApp}?text=${encodeURIComponent(
+                  "Jai Johar! We are planning a corporate team offsite with 36 Montane. Can we discuss customized group packages?"
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto px-5 py-3.5 bg-[#25D366] hover:bg-[#1ebe5b] text-white font-bold rounded-xl text-xs text-center shadow transition flex items-center justify-center gap-2"
+              >
+                <span>💬</span>
+                <span>Inquire on WhatsApp</span>
+              </a>
             </div>
           </div>
         </div>

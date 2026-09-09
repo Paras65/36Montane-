@@ -18,6 +18,7 @@ const Navbar = () => {
   const links = [
     { to: '/home', label: 'Home' },
     { to: '/service', label: 'Tours & Treks' },
+    { to: '/corporate', label: '💼 Corporate' },
     { to: '/gallery', label: 'Bastar Gallery' },
     { to: '/event', label: 'Events & Campfires' },
     { to: '/about', label: 'Our Story' },

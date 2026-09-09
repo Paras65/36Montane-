@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 import { getOwnerWhatsAppNumber } from '../utils/whatsapp';
 
 // Helper to compute dynamic upcoming weekend dates so batches are never in the past
@@ -372,17 +372,25 @@ const UpcomingBatches = () => {
             </div>
           </div>
 
-          <a
-            href={`https://wa.me/${ownerWhatsApp}?text=${encodeURIComponent(
-              "Jai Johar! I am interested in organizing a customized private expedition with 36 Montane. Can we discuss dates and group pricing?"
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="shrink-0 px-6 py-3 bg-[#25D366] hover:bg-[#1ebe5b] text-white font-bold rounded-xl text-xs shadow-md transition hover:scale-105 flex items-center gap-2"
-          >
-            <span>💬</span>
-            <span>Request Custom Batch</span>
-          </a>
+          <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
+            <NavLink
+              to="/corporate"
+              className="px-5 py-3 bg-[#C84B31] hover:bg-[#9E321C] text-white font-bold rounded-xl text-xs shadow-md transition hover:scale-105 text-center"
+            >
+              Explore Corporate Offers
+            </NavLink>
+            <a
+              href={`https://wa.me/${ownerWhatsApp}?text=${encodeURIComponent(
+                "Jai Johar! I am interested in organizing a customized private expedition with 36 Montane. Can we discuss dates and group pricing?"
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-3 bg-[#25D366] hover:bg-[#1ebe5b] text-white font-bold rounded-xl text-xs shadow-md transition hover:scale-105 flex items-center gap-2"
+            >
+              <span>💬</span>
+              <span>WhatsApp Us</span>
+            </a>
+          </div>
         </div>
 
       </div>
@@ -391,3 +399,4 @@ const UpcomingBatches = () => {
 };
 
 export default UpcomingBatches;
+
