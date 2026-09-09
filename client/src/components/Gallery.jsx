@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "../style/Recenttrips.css";
 import SpinnerWithIcon  from "./SpinnerWithIcon";
 import { mockGalleryItems } from "../data/mockData";
+import { safeParseJson } from "../utils/safeFetch";
 
 const API_URL = `${import.meta.env.VITE_API_URL || ''}/api/gallery/type`;
 
@@ -49,8 +50,7 @@ const RecentTrips = () => {
     const fetchTripsData = async () => {
       try {
         const response = await fetch(API_URL);
-        if (!response.ok) throw new Error("Failed to fetch data");
-        const data = await response.json();
+        const data = await safeParseJson(response, mockGalleryItems);
         const items = Array.isArray(data) && data.length > 0 ? data : mockGalleryItems;
         setTripsData(items);
         setVisible(new Array(items.length).fill(true));

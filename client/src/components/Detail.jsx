@@ -6,6 +6,7 @@ import { useLocation } from "react-router-dom";
 import { mockFeaturedTrips } from "../data/mockData";
 import { generateOwnerWhatsAppUrl } from "../utils/whatsapp";
 import UpiPaymentModal from "./UpiPaymentModal";
+import { safeParseJson } from "../utils/safeFetch";
 
 const BookingDetail = () => {
   const location = useLocation();
@@ -164,9 +165,9 @@ const BookingDetail = () => {
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || data.message || 'Failed to submit booking');
+      const data = await safeParseJson(res, null);
+      if (!res.ok || !data) {
+        throw new Error(data?.error || data?.message || 'Failed to submit booking');
       }
 
       setConfirmedBooking(payload);

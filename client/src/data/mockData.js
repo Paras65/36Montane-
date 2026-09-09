@@ -214,3 +214,85 @@ export const mockArticles = [
   }
 ];
 
+export const mockReviews = [
+  {
+    _id: "rev-1",
+    name: "Aarav Sharma",
+    location: "Raipur, Chhattisgarh",
+    tripTitle: "Saroda Dadar Forest Trail & Camp",
+    rating: 5,
+    comment: "The campfire acoustic music under the star-studded Milky Way and the freshly cooked hot Angakar Roti with tomato chutney was unreal. Our local guide Manglu knew every forest trail by heart. Cannot recommend 36 Montane enough!",
+    photoUrl: "https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=800&q=80",
+    badge: "Verified Trekker",
+    travelDate: "Aug 2026",
+    isApproved: true,
+    likes: 34
+  },
+  {
+    _id: "rev-2",
+    name: "Devika Nair",
+    location: "Bengaluru, Karnataka",
+    tripTitle: "Bastar Secret Waterfalls Expedition",
+    rating: 5,
+    comment: "As a solo female traveler, safety was my #1 concern. The 36 Montane crew met me directly at Jagdalpur station and looked after everything. Trekking through the sal canopy to hidden cascades was breathtaking!",
+    photoUrl: "https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=800&q=80",
+    badge: "Verified Trekker",
+    travelDate: "Aug 2026",
+    isApproved: true,
+    likes: 42
+  },
+  {
+    _id: "rev-3",
+    name: "Vikramaditya Sahu",
+    location: "Bhilai, Chhattisgarh",
+    tripTitle: "Corporate Team Offsite & Plateau Camp",
+    rating: 5,
+    comment: "We brought our 24-person engineering team for a 2-day wilderness offsite. Zero mobile network forced everyone to genuinely connect. Jungle survival challenges and team bonfire discussions made this our best retreat ever.",
+    photoUrl: "https://images.unsplash.com/photo-1523906834658-6e2b32c950cb?auto=format&fit=crop&w=800&q=80",
+    badge: "Corporate Lead",
+    travelDate: "Sep 2026",
+    isApproved: true,
+    likes: 29
+  },
+  {
+    _id: "rev-4",
+    name: "Rohan & Sneha Mukherjee",
+    location: "Kolkata, West Bengal",
+    tripTitle: "Bhoramdev Valley Trek & Heritage",
+    rating: 5,
+    comment: "Visiting the 11th-century stone temple at sunrise and then hiking up into the Maikal hills was pure magic. Clean high-altitude tents, immaculate eco-friendly bio-toilets, and zero plastic on the trail.",
+    photoUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+    badge: "Verified Trekker",
+    travelDate: "Jul 2026",
+    isApproved: true,
+    likes: 19
+  },
+  {
+    _id: "rev-5",
+    name: "Kavita Rao",
+    location: "Hyderabad, Telangana",
+    tripTitle: "Maikal Hills Ridge Expedition",
+    rating: 5,
+    comment: "The monsoon mist swirling over the ridge lines was otherworldly! The elevation gain was challenging, but the summit ridge viewpoint made every droplet of sweat worth it. Top notch first aid readiness.",
+    photoUrl: "https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?auto=format&fit=crop&w=800&q=80",
+    badge: "Verified Trekker",
+    travelDate: "Aug 2026",
+    isApproved: true,
+    likes: 25
+  },
+  {
+    _id: "rev-6",
+    name: "Tanmay Dewangan",
+    location: "Bilaspur, Chhattisgarh",
+    tripTitle: "Kanger Valley Caves & Wildlife Trail",
+    rating: 5,
+    comment: "Navigating the limestone stalactite formations with high-lumen headlamps was pure adventure. The guides are indigenous locals who respect the forest and explain tribal folklore. Proud to see this in Chhattisgarh!",
+    photoUrl: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+    badge: "Verified Trekker",
+    travelDate: "Sep 2026",
+    isApproved: true,
+    likes: 31
+  }
+];
+
+

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { format, addMinutes } from 'date-fns';
 import SpinnerWithIcon from './SpinnerWithIcon';
 import { mockEvents } from '../data/mockData';
+import { safeParseJson } from '../utils/safeFetch';
 
 const EventCard = ({ event, timeLeft, onSave }) => (
   <div className="bg-white rounded-3xl border border-[#EADBCE] p-6 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
@@ -60,10 +61,7 @@ const EventPage = () => {
     try {
       const baseUrl = import.meta.env.VITE_API_URL || '';
       const response = await fetch(`${baseUrl}/api/events`);
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
-      const data = await response.json();
+      const data = await safeParseJson(response, mockEvents);
       setEvents(Array.isArray(data) && data.length > 0 ? data : mockEvents);
     } catch (err) {
       console.warn('Error fetching events, using mock fallback:', err);

@@ -1,4 +1,4 @@
-const CACHE_NAME = '36montane-v1.0';
+const CACHE_NAME = '36montane-v1.3';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -39,18 +39,31 @@ self.addEventListener('fetch', (event) => {
   // Ignore non-HTTP/HTTPS and third party analytics/extensions
   if (!request.url.startsWith('http')) return;
 
-  // 1. API Requests -> Network-First, fallback to cache
+  // 1. API Requests -> Network-First, strictly cache JSON only, NEVER return HTML
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          if (response && response.status === 200 && request.method === 'GET') {
+          const contentType = response.headers.get('content-type') || '';
+          // Strictly avoid caching HTML error fallbacks under API keys
+          if (response && response.status === 200 && request.method === 'GET' && contentType.includes('application/json')) {
             const responseClone = response.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
           }
           return response;
         })
-        .catch(() => caches.match(request))
+        .catch(async () => {
+          const cached = await caches.match(request);
+          if (cached) return cached;
+          // Return a safe JSON 503 response instead of throwing or falling back to index.html
+          return new Response(
+            JSON.stringify({ offline: true, message: 'Offline or API unavailable' }),
+            {
+              status: 503,
+              headers: { 'Content-Type': 'application/json' }
+            }
+          );
+        })
     );
     return;
   }

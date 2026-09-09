@@ -4,6 +4,7 @@ import { faFacebook, faTwitter, faLinkedin, faWhatsapp } from '@fortawesome/free
 import { faCalendarAlt, faUser, faComments } from '@fortawesome/free-solid-svg-icons';
 import SpinnerWithIcon from './SpinnerWithIcon';
 import { mockArticles } from '../data/mockData';
+import { safeParseJson } from '../utils/safeFetch';
 
 const BlogDetail = () => {
   const [expandedBlogId, setExpandedBlogId] = useState(null);
@@ -19,10 +20,7 @@ const BlogDetail = () => {
       try {
         const baseUrl = import.meta.env.VITE_API_URL || '';
         const response = await fetch(`${baseUrl}/api/articles`);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
+        const data = await safeParseJson(response, mockArticles);
         setBlogs(Array.isArray(data) && data.length > 0 ? data : mockArticles);
       } catch (err) {
         console.warn('Error fetching blogs, showing mock articles:', err);

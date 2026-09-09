@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { mockFeaturedTrips } from '../data/mockData';
+import { safeParseJson } from '../utils/safeFetch';
 
 const TripDetailPage = () => {
   const { id } = useParams(); // Get the 'id' from the URL params
@@ -11,21 +13,17 @@ const TripDetailPage = () => {
   // Fetch trip data based on the 'id' from the URL
   useEffect(() => {
     const fetchTripData = async () => {
+      const fallbackTrip = mockFeaturedTrips.find((t) => t._id === id) || mockFeaturedTrips[0];
       try {
         const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
-        const response = await fetch(`${baseUrl}/api/gettrip/${id}`); // Fetch based on the trip id
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        const data = await response.json();
-        if (!data) {
-          throw new Error('No data found for this trip');
-        }
-        setTripData(data); // Set the fetched trip data
+        const response = await fetch(`${baseUrl}/api/gettrip/${id}`);
+        const data = await safeParseJson(response, fallbackTrip);
+        setTripData(data || fallbackTrip);
       } catch (err) {
-        setError(err.message); // Set the error if fetch fails
+        console.warn('Trip fetch failed, using fallback:', err);
+        setTripData(fallbackTrip);
       } finally {
-        setIsLoading(false); // Set loading to false once the data is fetched
+        setIsLoading(false);
       }
     };
 

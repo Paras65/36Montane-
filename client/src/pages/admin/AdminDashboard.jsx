@@ -3,6 +3,7 @@ import {
   generateCustomerWhatsAppUrl,
   generateContactReplyWhatsAppUrl,
 } from '../../utils/whatsapp';
+import { safeParseJson } from '../../utils/safeFetch';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -202,18 +203,42 @@ const AdminDashboard = () => {
         authFetch(`${baseUrl}/api/health`).catch(() => null),
       ]);
 
-      if (tripsRes?.ok) setTrips(await tripsRes.json());
-      if (servicesRes?.ok) setServices(await servicesRes.json());
-      if (bookingsRes?.ok) setBookings(await bookingsRes.json());
-      if (eventsRes?.ok) setEvents(await eventsRes.json());
-      if (articlesRes?.ok) setArticles(await articlesRes.json());
-      if (galleryRes?.ok) setGallery(await galleryRes.json());
-      if (contactsRes?.ok) setContacts(await contactsRes.json());
-      if (reviewsRes?.ok) {
-        const revData = await reviewsRes.json();
-        setReviews(Array.isArray(revData) ? revData : revData.reviews || []);
+      if (tripsRes?.ok) {
+        const d = await safeParseJson(tripsRes, null);
+        if (Array.isArray(d)) setTrips(d);
       }
-      if (healthRes?.ok) setHealth(await healthRes.json());
+      if (servicesRes?.ok) {
+        const d = await safeParseJson(servicesRes, null);
+        if (Array.isArray(d)) setServices(d);
+      }
+      if (bookingsRes?.ok) {
+        const d = await safeParseJson(bookingsRes, null);
+        if (Array.isArray(d)) setBookings(d);
+      }
+      if (eventsRes?.ok) {
+        const d = await safeParseJson(eventsRes, null);
+        if (Array.isArray(d)) setEvents(d);
+      }
+      if (articlesRes?.ok) {
+        const d = await safeParseJson(articlesRes, null);
+        if (Array.isArray(d)) setArticles(d);
+      }
+      if (galleryRes?.ok) {
+        const d = await safeParseJson(galleryRes, null);
+        if (Array.isArray(d)) setGallery(d);
+      }
+      if (contactsRes?.ok) {
+        const d = await safeParseJson(contactsRes, null);
+        if (Array.isArray(d)) setContacts(d);
+      }
+      if (reviewsRes?.ok) {
+        const d = await safeParseJson(reviewsRes, null);
+        if (d) setReviews(Array.isArray(d) ? d : d.reviews || []);
+      }
+      if (healthRes?.ok) {
+        const d = await safeParseJson(healthRes, null);
+        if (d) setHealth(d);
+      }
     } catch (err) {
       console.error('Error fetching admin data:', err);
       showNotification('Failed to fetch latest data', 'error');

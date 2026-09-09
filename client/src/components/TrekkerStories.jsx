@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { generateInquiryWhatsAppUrl } from '../utils/whatsapp';
+import { mockReviews } from '../data/mockData';
+import { safeFetchJson, safeParseJson } from '../utils/safeFetch';
 
 const PRESET_PHOTOS = [
   {
@@ -68,14 +70,17 @@ const TrekkerStories = () => {
 
   const fetchReviews = async () => {
     try {
-      const res = await fetch(`${baseUrl}/api/reviews`);
-      if (res.ok) {
-        const data = await res.json();
-        setReviews(data.reviews || []);
+      const data = await safeFetchJson(`${baseUrl}/api/reviews`, {}, null);
+      if (data && Array.isArray(data.reviews) && data.reviews.length > 0) {
+        setReviews(data.reviews);
         if (data.stats) setStats(data.stats);
+      } else {
+        setReviews(mockReviews);
+        setStats({ totalReviews: mockReviews.length, averageRating: 4.9, distribution: { 5: mockReviews.length } });
       }
     } catch (err) {
-      console.error('Error fetching trekker stories:', err);
+      console.warn('Error fetching trekker stories, using fallback:', err);
+      setReviews(mockReviews);
     } finally {
       setIsLoading(false);
     }
@@ -96,7 +101,7 @@ const TrekkerStories = () => {
     );
 
     try {
-      await fetch(`${baseUrl}/api/reviews/${id}/like`, { method: 'POST' });
+      await fetch(`${baseUrl}/api/reviews/${id}/like`, { method: 'POST' }).catch(() => null);
     } catch (err) {
       console.error('Failed to register like:', err);
     }
@@ -119,13 +124,12 @@ const TrekkerStories = () => {
         body: JSON.stringify(form),
       });
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.message || 'Failed to submit review');
+      const parsed = await safeParseJson(res, null);
+      if (!res.ok || !parsed) {
+        throw new Error(parsed?.message || 'Failed to submit review');
       }
 
-      const created = await res.json();
-      setReviews((prev) => [created, ...prev]);
+      setReviews((prev) => [parsed, ...prev]);
       setSubmitSuccess(true);
       setTimeout(() => {
         setIsModalOpen(false);
@@ -676,3 +680,4 @@ const TrekkerStories = () => {
 };
 
 export default TrekkerStories;
+

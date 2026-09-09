@@ -21,6 +21,7 @@ import UpcomingBatches from "./UpcomingBatches";
 import TrekkerStories from "./TrekkerStories";
 import { mockFeaturedTrips, mockServices } from "../data/mockData";
 import { getOwnerWhatsAppNumber } from "../utils/whatsapp";
+import { safeParseJson } from "../utils/safeFetch";
 
 // Info badge with earthy icon
 const InfoWithIcon = ({ icon, label, value }) => (
@@ -57,11 +58,11 @@ const Homepage = () => {
 
       if (tripsRes?.ok && servicesRes?.ok) {
         const [tripsData, servicesData] = await Promise.all([
-          tripsRes.json(),
-          servicesRes.json(),
+          safeParseJson(tripsRes, mockFeaturedTrips),
+          safeParseJson(servicesRes, mockServices),
         ]);
-        setFeaturedTrips(tripsData && tripsData.length > 0 ? tripsData : mockFeaturedTrips);
-        setTrekkingServices(servicesData && servicesData.length > 0 ? servicesData : mockServices);
+        setFeaturedTrips(Array.isArray(tripsData) && tripsData.length > 0 ? tripsData : mockFeaturedTrips);
+        setTrekkingServices(Array.isArray(servicesData) && servicesData.length > 0 ? servicesData : mockServices);
       } else {
         setFeaturedTrips(mockFeaturedTrips);
         setTrekkingServices(mockServices);

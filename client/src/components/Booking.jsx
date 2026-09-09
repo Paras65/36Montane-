@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { generateOwnerWhatsAppUrl } from "../utils/whatsapp";
 import UpiPaymentModal from "./UpiPaymentModal";
+import { safeParseJson } from "../utils/safeFetch";
 
 const Booking = () => {
   const [formData, setFormData] = useState({
@@ -64,9 +65,9 @@ const Booking = () => {
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || data.message || 'Failed to submit booking');
+      const data = await safeParseJson(res, null);
+      if (!res.ok || !data) {
+        throw new Error(data?.error || data?.message || 'Failed to submit booking');
       }
 
       setConfirmedBooking(payload);
