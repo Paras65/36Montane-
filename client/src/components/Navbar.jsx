@@ -66,8 +66,16 @@ const Navbar = () => {
           </div>
 
           {/* Right Action CTA Button (Desktop) */}
-          <div className="hidden sm:flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-2.5">
             <LiveWeather isCompact={true} />
+            <a
+              href="/home#upcoming-batches"
+              className="hidden xl:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#C84B31]/20 hover:bg-[#C84B31] text-amber-200 hover:text-white border border-[#E9C46A]/30 transition"
+              title="View live weekend batches & departures"
+            >
+              <span>📅</span>
+              <span>Batches</span>
+            </a>
             <a
               href="/home#trail-map"
               className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#1B4332] text-amber-200 hover:text-white hover:bg-[#2D6A4F] border border-amber-500/20 transition"
@@ -76,10 +84,6 @@ const Navbar = () => {
               <span>🗺️</span>
               <span>Trail Map</span>
             </a>
-            <span className="hidden xl:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#1B4332] text-amber-200 border border-amber-500/20">
-              <span>🙏</span>
-              <span>जय जोहार</span>
-            </span>
             <NavLink
               to="/service"
               className="px-4 py-2 bg-gradient-to-r from-[#C84B31] to-[#9E321C] hover:from-[#D95338] hover:to-[#B8391B] text-white text-xs font-bold rounded-xl shadow-md shadow-black/30 border border-amber-400/30 transition hover:scale-105 flex items-center gap-1.5"
@@ -140,6 +144,14 @@ const Navbar = () => {
                   {label}
                 </NavLink>
               ))}
+              <a
+                href="/home#upcoming-batches"
+                onClick={handleLinkClick}
+                className="text-amber-100/85 hover:bg-emerald-900/60 hover:text-amber-200 px-3.5 py-1.5 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-2"
+              >
+                <span>📅</span>
+                <span>Upcoming Weekend Batches</span>
+              </a>
               <a
                 href="/home#trail-map"
                 onClick={handleLinkClick}
