@@ -19,13 +19,33 @@ const createBooking = async (req, res) => {
         return res.status(400).json({ error: "Name, email, numberOfPeople, and tripId are required" });
     }
 
+    const trimmedName = String(name).trim();
+    const trimmedEmail = String(email).trim().toLowerCase();
+    const peopleCount = parseInt(numberOfPeople, 10);
+
+    if (trimmedName.length > 100) {
+        return res.status(400).json({ error: "Name cannot exceed 100 characters" });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+        return res.status(400).json({ error: "Invalid email address format" });
+    }
+
+    if (isNaN(peopleCount) || peopleCount < 1 || peopleCount > 100) {
+        return res.status(400).json({ error: "Number of people must be a valid number between 1 and 100" });
+    }
+
+    const allowedStatuses = ['Confirmed', 'Pending', 'Cancelled'];
+    const bookingStatus = allowedStatuses.includes(status) ? status : 'Confirmed';
+
     try {
         const booking = new Booking({
-            name,
-            email,
-            numberOfPeople,
+            name: trimmedName,
+            email: trimmedEmail,
+            numberOfPeople: peopleCount,
             tripId,
-            status: status || 'Confirmed',
+            status: bookingStatus,
             bookingDate: new Date()
         });
 

@@ -14,6 +14,17 @@ let inMemoryArticles = articles.map(a => ({ ...a }));
 let inMemoryBookings = bookings.map(b => ({ ...b }));
 let inMemoryContacts = contacts.map(c => ({ ...c }));
 
+const verifyAuth = (req) => {
+  let token = req.header('Authorization');
+  if (!token) return false;
+  if (token.startsWith('Bearer ')) token = token.slice(7).trim();
+  try {
+    return jwt.verify(token, getJwtSecret());
+  } catch {
+    return false;
+  }
+};
+
 const offlineFallback = (req, res, next) => {
   // If MongoDB is connected, pass through to actual Mongoose controllers
   if (getIsConnected()) {
@@ -21,6 +32,18 @@ const offlineFallback = (req, res, next) => {
   }
 
   const { method, path, query, body } = req;
+
+  // Protected administrative route check
+  const isProtectedAdminRoute =
+    (method === 'GET' && (path === '/contacts' || path === '/bookings')) ||
+    (method === 'POST' && ['/addtrip', '/services', '/event', '/articles', '/gallery/type', '/addtrek'].includes(path)) ||
+    (method === 'PUT' && (path.startsWith('/trips/') || path.startsWith('/services/') || path.startsWith('/events/') || path.startsWith('/articles/'))) ||
+    (method === 'PATCH' && path.startsWith('/bookings/')) ||
+    (method === 'DELETE' && (path.startsWith('/trips/') || path.startsWith('/services/') || path.startsWith('/events/') || path.startsWith('/articles/') || path.startsWith('/gallery/') || path.startsWith('/contacts/') || path.startsWith('/bookings/')));
+
+  if (isProtectedAdminRoute && !verifyAuth(req)) {
+    return res.status(401).json({ message: 'Authentication required for administrative actions' });
+  }
 
   // --- AUTH FALLBACK ---
   if (path === '/auth/login' && method === 'POST') {
@@ -220,6 +243,14 @@ const offlineFallback = (req, res, next) => {
 
   // POST /contact
   if (method === 'POST' && path === '/contact') {
+    const { name, email, message } = body;
+    if (!name || !email || !message) {
+      return res.status(400).json({ error: 'Name, email, and message are required' });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(String(email).trim())) {
+      return res.status(400).json({ error: 'Invalid email address format' });
+    }
     const contact = { _id: `6581f1b2c45e12345678${Date.now().toString().slice(-4)}`, ...body, createdAt: new Date() };
     inMemoryContacts.unshift(contact);
     return res.status(200).json({ message: 'Your message has been saved successfully!' });
@@ -240,6 +271,14 @@ const offlineFallback = (req, res, next) => {
 
   // POST /booking
   if (method === 'POST' && path === '/booking') {
+    const { name, email, numberOfPeople, tripId } = body;
+    if (!name || !email || !numberOfPeople || !tripId) {
+      return res.status(400).json({ error: 'Name, email, numberOfPeople, and tripId are required' });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(String(email).trim())) {
+      return res.status(400).json({ error: 'Invalid email address format' });
+    }
     const booking = {
       _id: `6581f1b2c45e12345678${Date.now().toString().slice(-4)}`,
       status: 'Confirmed',

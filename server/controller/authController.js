@@ -13,7 +13,7 @@ const generateToken = (user) => {
     );
 };
 
-// Register new user
+// Register new user (Protected: first user allowed or requires admin secret/auth)
 const register = async (req, res) => {
     const { username, email, password, name, role } = req.body;
 
@@ -21,10 +21,25 @@ const register = async (req, res) => {
         return res.status(400).json({ message: 'Username/email and password are required' });
     }
 
+    if (password.length < 6) {
+        return res.status(400).json({ message: 'Password must be at least 6 characters long' });
+    }
+
     try {
+        const userCount = await User.countDocuments();
+        if (userCount > 0) {
+            const adminSecret = req.header('x-admin-secret');
+            const hasValidSecret = process.env.REGISTRATION_SECRET && adminSecret === process.env.REGISTRATION_SECRET;
+            const isAdminUser = req.user && req.user.role === 'admin';
+
+            if (!hasValidSecret && !isAdminUser) {
+                return res.status(403).json({ message: 'Registration is restricted. Admin authorization required.' });
+            }
+        }
+
         const query = [];
-        if (username) query.push({ username });
-        if (email) query.push({ email });
+        if (username) query.push({ username: String(username).trim() });
+        if (email) query.push({ email: String(email).trim().toLowerCase() });
 
         const existingUser = await User.findOne({ $or: query });
         if (existingUser) {
@@ -58,22 +73,25 @@ const register = async (req, res) => {
 // Login existing user
 const login = async (req, res) => {
     const { username, email, password } = req.body;
-    const identifier = username || email;
+    const identifier = (username || email || '').trim();
 
     if (!identifier || !password) {
         return res.status(400).json({ message: 'Please provide username/email and password' });
     }
 
+    const defaultAdminUser = process.env.ADMIN_USERNAME || 'admin';
+    const defaultAdminPass = process.env.ADMIN_PASSWORD || 'admin123';
+
     try {
         // Find user by username or email
         const user = await User.findOne({
-            $or: [{ username: identifier }, { email: identifier }]
+            $or: [{ username: identifier }, { email: identifier.toLowerCase() }]
         });
 
-        // Default admin fallback if credentials match admin / admin123
+        // Default admin fallback if credentials match configured admin credentials
         if (!user) {
-            if (identifier === 'admin' && password === 'admin123') {
-                const dummyAdmin = { id: 'admin-001', username: 'admin', email: 'admin@36montane.com', role: 'admin', name: 'Administrator' };
+            if (identifier === defaultAdminUser && password === defaultAdminPass) {
+                const dummyAdmin = { id: 'admin-001', username: defaultAdminUser, email: 'admin@36montane.com', role: 'admin', name: 'Administrator' };
                 const token = generateToken(dummyAdmin);
                 return res.json({ token, user: dummyAdmin });
             }
@@ -93,8 +111,8 @@ const login = async (req, res) => {
     } catch (err) {
         console.error('Login error:', err);
         // Fallback for development if database is unreachable
-        if (identifier === 'admin' && password === 'admin123') {
-            const dummyAdmin = { id: 'admin-001', username: 'admin', email: 'admin@36montane.com', role: 'admin', name: 'Administrator' };
+        if (identifier === defaultAdminUser && password === defaultAdminPass) {
+            const dummyAdmin = { id: 'admin-001', username: defaultAdminUser, email: 'admin@36montane.com', role: 'admin', name: 'Administrator' };
             const token = generateToken(dummyAdmin);
             return res.json({ token, user: dummyAdmin });
         }

@@ -39,8 +39,8 @@ const Contact = () => {
     setApiError(""); // Reset any previous API errors
 
     try {
-      // Example of a POST request to an API
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/contact`, {
+      const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+      const response = await fetch(`${baseUrl}/api/contact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

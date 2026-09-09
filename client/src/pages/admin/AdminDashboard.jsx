@@ -75,11 +75,32 @@ const AdminDashboard = () => {
     platform: 'instagram',
   });
 
-  const baseUrl = import.meta.env.VITE_API_URL || '';
+  const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
   const showNotification = (msg, type = 'success') => {
     setNotification({ msg, type });
     setTimeout(() => setNotification(null), 4000);
+  };
+
+  // Secure authenticated fetch helper: attaches JWT token and auto-redirects on expiry
+  const authFetch = async (url, options = {}) => {
+    const token = localStorage.getItem('adminToken');
+    const headers = {
+      ...(options.headers || {}),
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    const response = await fetch(url, { ...options, headers });
+    if (response.status === 401) {
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('adminUser');
+      showNotification('Session expired. Redirecting to login...', 'error');
+      setTimeout(() => {
+        window.location.href = '/admin/login';
+      }, 1200);
+    }
+    return response;
   };
 
   // Fetch all administrative data
@@ -96,14 +117,14 @@ const AdminDashboard = () => {
         contactsRes,
         healthRes,
       ] = await Promise.all([
-        fetch(`${baseUrl}/api/featuredtrips`).catch(() => null),
-        fetch(`${baseUrl}/api/services`).catch(() => null),
-        fetch(`${baseUrl}/api/bookings`).catch(() => null),
-        fetch(`${baseUrl}/api/events`).catch(() => null),
-        fetch(`${baseUrl}/api/articles`).catch(() => null),
-        fetch(`${baseUrl}/api/gallery/type`).catch(() => null),
-        fetch(`${baseUrl}/api/contacts`).catch(() => null),
-        fetch(`${baseUrl}/api/health`).catch(() => null),
+        authFetch(`${baseUrl}/api/featuredtrips`).catch(() => null),
+        authFetch(`${baseUrl}/api/services`).catch(() => null),
+        authFetch(`${baseUrl}/api/bookings`).catch(() => null),
+        authFetch(`${baseUrl}/api/events`).catch(() => null),
+        authFetch(`${baseUrl}/api/articles`).catch(() => null),
+        authFetch(`${baseUrl}/api/gallery/type`).catch(() => null),
+        authFetch(`${baseUrl}/api/contacts`).catch(() => null),
+        authFetch(`${baseUrl}/api/health`).catch(() => null),
       ]);
 
       if (tripsRes?.ok) setTrips(await tripsRes.json());
@@ -141,7 +162,7 @@ const AdminDashboard = () => {
 
     try {
       if (editingTrip) {
-        const res = await fetch(`${baseUrl}/api/trips/${editingTrip._id}`, {
+        const res = await authFetch(`${baseUrl}/api/trips/${editingTrip._id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
@@ -151,7 +172,7 @@ const AdminDashboard = () => {
         setTrips(trips.map((t) => (t._id === updated._id ? updated : t)));
         showNotification('Trip updated successfully!');
       } else {
-        const res = await fetch(`${baseUrl}/api/addtrip`, {
+        const res = await authFetch(`${baseUrl}/api/addtrip`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
@@ -171,7 +192,7 @@ const AdminDashboard = () => {
   const handleDeleteTrip = async (id) => {
     if (!window.confirm('Are you sure you want to delete this trip?')) return;
     try {
-      const res = await fetch(`${baseUrl}/api/trips/${id}`, { method: 'DELETE' });
+      const res = await authFetch(`${baseUrl}/api/trips/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete trip');
       setTrips(trips.filter((t) => t._id !== id));
       showNotification('Trip deleted successfully!');
@@ -218,7 +239,7 @@ const AdminDashboard = () => {
     e.preventDefault();
     try {
       if (editingService) {
-        const res = await fetch(`${baseUrl}/api/services/${editingService._id}`, {
+        const res = await authFetch(`${baseUrl}/api/services/${editingService._id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(serviceForm),
@@ -228,7 +249,7 @@ const AdminDashboard = () => {
         setServices(services.map((s) => (s._id === updated._id ? updated : s)));
         showNotification('Service updated successfully!');
       } else {
-        const res = await fetch(`${baseUrl}/api/services`, {
+        const res = await authFetch(`${baseUrl}/api/services`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(serviceForm),
@@ -248,7 +269,7 @@ const AdminDashboard = () => {
   const handleDeleteService = async (id) => {
     if (!window.confirm('Delete this service?')) return;
     try {
-      const res = await fetch(`${baseUrl}/api/services/${id}`, { method: 'DELETE' });
+      const res = await authFetch(`${baseUrl}/api/services/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete service');
       setServices(services.filter((s) => s._id !== id));
       showNotification('Service deleted successfully!');
@@ -292,7 +313,7 @@ const AdminDashboard = () => {
   const handleToggleBookingStatus = async (id, currentStatus) => {
     const nextStatus = currentStatus === 'Confirmed' ? 'Pending' : 'Confirmed';
     try {
-      const res = await fetch(`${baseUrl}/api/bookings/${id}/status`, {
+      const res = await authFetch(`${baseUrl}/api/bookings/${id}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: nextStatus }),
@@ -310,7 +331,7 @@ const AdminDashboard = () => {
   const handleDeleteBooking = async (id) => {
     if (!window.confirm('Delete this booking?')) return;
     try {
-      const res = await fetch(`${baseUrl}/api/bookings/${id}`, { method: 'DELETE' });
+      const res = await authFetch(`${baseUrl}/api/bookings/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete booking');
       setBookings(bookings.filter((b) => b._id !== id));
       showNotification('Booking deleted');
@@ -323,7 +344,7 @@ const AdminDashboard = () => {
   const handleSaveEvent = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${baseUrl}/api/event`, {
+      const res = await authFetch(`${baseUrl}/api/event`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -344,7 +365,7 @@ const AdminDashboard = () => {
   const handleDeleteEvent = async (id) => {
     if (!window.confirm('Delete this event?')) return;
     try {
-      const res = await fetch(`${baseUrl}/api/events/${id}`, { method: 'DELETE' });
+      const res = await authFetch(`${baseUrl}/api/events/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete event');
       setEvents(events.filter((e) => e._id !== id));
       showNotification('Event deleted successfully!');
@@ -357,7 +378,7 @@ const AdminDashboard = () => {
   const handleSaveArticle = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${baseUrl}/api/articles`, {
+      const res = await authFetch(`${baseUrl}/api/articles`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(articleForm),
@@ -375,7 +396,7 @@ const AdminDashboard = () => {
   const handleDeleteArticle = async (id) => {
     if (!window.confirm('Delete this article?')) return;
     try {
-      const res = await fetch(`${baseUrl}/api/articles/${id}`, { method: 'DELETE' });
+      const res = await authFetch(`${baseUrl}/api/articles/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete article');
       setArticles(articles.filter((a) => a._id !== id));
       showNotification('Article deleted');
@@ -388,7 +409,7 @@ const AdminDashboard = () => {
   const handleSaveGallery = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${baseUrl}/api/gallery/type`, {
+      const res = await authFetch(`${baseUrl}/api/gallery/type`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(galleryForm),
@@ -406,7 +427,7 @@ const AdminDashboard = () => {
   const handleDeleteGallery = async (id) => {
     if (!window.confirm('Delete this gallery item?')) return;
     try {
-      const res = await fetch(`${baseUrl}/api/gallery/${id}`, { method: 'DELETE' });
+      const res = await authFetch(`${baseUrl}/api/gallery/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete media item');
       setGallery(gallery.filter((g) => g._id !== id));
       showNotification('Media deleted successfully!');
@@ -419,7 +440,7 @@ const AdminDashboard = () => {
   const handleDeleteContact = async (id) => {
     if (!window.confirm('Delete this inquiry?')) return;
     try {
-      const res = await fetch(`${baseUrl}/api/contacts/${id}`, { method: 'DELETE' });
+      const res = await authFetch(`${baseUrl}/api/contacts/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete inquiry');
       setContacts(contacts.filter((c) => c._id !== id));
       showNotification('Inquiry deleted');

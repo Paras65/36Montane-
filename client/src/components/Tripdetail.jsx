@@ -11,7 +11,8 @@ const TripDetailPage = () => {
   useEffect(() => {
     const fetchTripData = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/gettrip/${id}`); // Fetch based on the trip id
+        const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+        const response = await fetch(`${baseUrl}/api/gettrip/${id}`); // Fetch based on the trip id
         if (!response.ok) {
           throw new Error('Failed to fetch data');
         }

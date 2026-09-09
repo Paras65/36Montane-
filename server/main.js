@@ -18,22 +18,47 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Middleware
-app.use(bodyParser.json());
+// Middleware & Payload Size Limits (DoS Prevention)
+app.use(bodyParser.json({ limit: '100kb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '100kb' }));
 
-// Security Middleware
-app.use(helmet());
+// Security Headers
+app.disable('x-powered-by');
+app.use(helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
+}));
 app.use(xss());
 app.use(mongoSanitize());
 app.use(hpp());
 
-// Rate Limiting
-const limiter = rateLimit({
+// General Rate Limiting
+const generalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 200,
-    message: 'Too many requests from this IP, please try again later.',
+    max: 300,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: 'Too many requests from this IP, please try again later.' },
 });
-app.use(limiter);
+app.use(generalLimiter);
+
+// Specialized Auth Brute-Force Rate Limiter
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: 'Too many authentication attempts from this IP. Please try again after 15 minutes.' },
+});
+
+// Specialized Form Spam Rate Limiter
+const formLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: 'Submission limit reached from this IP. Please wait a few minutes before trying again.' },
+});
 
 // CORS Configuration - Supports Local, Vercel Deployments, and Custom Production Domains
 const configuredOrigins = [
@@ -97,12 +122,20 @@ connectDB();
 app.use('/api', offlineFallback);
 
 // Routes
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/contact', formLimiter);
+app.use('/api/booking', formLimiter);
 app.use('/api', apiRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
-    console.error('Server error:', err.stack);
+    if (err.type === 'entity.too.large') {
+        return res.status(413).json({ message: 'Request payload too large. Maximum size is 100kb.' });
+    }
+    if (err.message && err.message.includes('CORS')) {
+        return res.status(403).json({ message: err.message });
+    }
+    console.error('Server error:', err.stack || err.message);
     res.status(500).json({ message: 'Internal Server Error' });
 });
 
