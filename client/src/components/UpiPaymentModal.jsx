@@ -193,3 +193,4 @@ const UpiPaymentModal = ({ booking, onClose }) => {
 };
 
 export default UpiPaymentModal;
+

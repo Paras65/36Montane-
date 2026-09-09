@@ -82,13 +82,13 @@ app.use(cors({
             return callback(null, true);
         }
 
-        // Allow all Vercel deployments (*.vercel.app)
-        if (/^https?:\/\/([a-z0-9-]+)\.vercel\.app$/i.test(origin)) {
+        // Allow official 36 Montane Vercel deployments & preview branches
+        if (/^https?:\/\/(36-?montane[a-z0-9-]*|init[a-z0-9-]*|three6montane[a-z0-9-]*)\.vercel\.app$/i.test(origin)) {
             return callback(null, true);
         }
 
-        // Allow all Render deployments (*.onrender.com)
-        if (/^https?:\/\/([a-z0-9-]+)\.onrender\.com$/i.test(origin)) {
+        // Allow official 36 Montane Render deployments
+        if (/^https?:\/\/(36-?montane[a-z0-9-]*|three6montane[a-z0-9-]*)\.onrender\.com$/i.test(origin)) {
             return callback(null, true);
         }
 
