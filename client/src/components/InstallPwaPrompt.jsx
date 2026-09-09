@@ -106,3 +106,4 @@ const InstallPwaPrompt = () => {
 };
 
 export default InstallPwaPrompt;
+

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHiking } from '@fortawesome/free-solid-svg-icons';
+import LiveWeather from "./LiveWeather";
 import "../style/Navbar.css";
 
 // Cultural link styles with terracotta and dokra gold accents
@@ -66,6 +67,7 @@ const Navbar = () => {
 
           {/* Right Action CTA Button (Desktop) */}
           <div className="hidden sm:flex items-center gap-3">
+            <LiveWeather isCompact={true} />
             <span className="hidden xl:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#1B4332] text-amber-200 border border-amber-500/20">
               <span>🙏</span>
               <span>जय जोहार</span>
@@ -114,9 +116,9 @@ const Navbar = () => {
             <div className="flex items-center justify-between px-3 py-2 bg-[#1B4332]/60 rounded-xl mb-3 border border-amber-500/20">
               <span className="text-xs font-semibold text-amber-200 flex items-center gap-1.5">
                 <span>🙏</span>
-                <span>जय जोहार • Welcome to Chhattisgarh</span>
+                <span>जय जोहार</span>
               </span>
-              <span className="text-[10px] text-emerald-300 font-mono">36 Forts</span>
+              <LiveWeather isCompact={true} />
             </div>
 
             <div className="flex flex-col space-y-1">

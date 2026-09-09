@@ -142,3 +142,4 @@ fs.writeFileSync(path.join(iconsDir, 'icon-maskable-512.png'), generatePNG(512, 
 fs.writeFileSync(path.join(iconsDir, 'apple-touch-icon.png'), generatePNG(180, 180));
 
 console.log('PWA PNG icons generated successfully in client/public/icons/');
+

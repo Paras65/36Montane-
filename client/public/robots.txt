@@ -5,3 +5,4 @@ Disallow: /admin/
 Disallow: /api/
 
 Sitemap: https://36-montane.vercel.app/sitemap.xml
+
