@@ -1,3 +1,61 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ===================================================
+   Chhattisgarhi Cultural Theme Accents & Motifs
+   Inspired by Bastar Dokra, Gond Art & Dandakaranya Sal Forests
+   =================================================== */
+
+/* Traditional Tribal Chevron / Godna Border Divider */
+.tribal-border-motif {
+  background: repeating-linear-gradient(
+    45deg,
+    #C84B31 0,
+    #C84B31 10px,
+    #D4A373 10px,
+    #D4A373 14px,
+    #1B4332 14px,
+    #1B4332 24px,
+    #FAF6F0 24px,
+    #FAF6F0 28px
+  );
+  height: 5px;
+  width: 100%;
+}
+
+/* Dokra Brass Ambient Glow */
+.dokra-glow {
+  box-shadow: 0 10px 30px -10px rgba(212, 163, 115, 0.35);
+}
+
+/* Terracotta Button Gradient */
+.btn-terracotta {
+  background: linear-gradient(135deg, #C84B31 0%, #A3351E 100%);
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+.btn-terracotta:hover {
+  background: linear-gradient(135deg, #D95338 0%, #B8391B 100%);
+  box-shadow: 0 8px 20px -6px rgba(200, 75, 49, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Sal Forest Green Button Gradient */
+.btn-forest {
+  background: linear-gradient(135deg, #1B4332 0%, #0D2319 100%);
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+.btn-forest:hover {
+  background: linear-gradient(135deg, #2D6A4F 0%, #1B4332 100%);
+  box-shadow: 0 8px 20px -6px rgba(27, 67, 50, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Subtle Tribal Background Texture */
+.bg-chhattisgarh-sand {
+  background-color: #FAF6F0;
+  background-image: radial-gradient(#D4A373 0.75px, transparent 0.75px);
+  background-size: 24px 24px;
+}

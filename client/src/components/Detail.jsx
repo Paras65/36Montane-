@@ -187,157 +187,205 @@ const BookingDetail = () => {
   };
 
   return (
-    <div className="container mx-auto px-6 py-16">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-        {/* Trip Details Section */}
-        <div className="bg-gray-50 rounded-xl shadow-lg overflow-hidden">
-          <img
-            src={tripDetails.headerImage ? tripDetails.headerImage : tripDetails.image}
-            alt="Trekking Adventure"
-            className="w-full h-64 object-cover rounded-t-xl"
-          />
-          <div className="p-8">
-            <h2 className="text-3xl font-extrabold text-gray-800">{tripDetails.title}</h2>
-            <p className="text-lg text-gray-700 mt-4">{tripDetails.description}</p>
-
-            <div className="mt-8">
-              <h3 className="text-xl font-semibold text-gray-800">Pricing</h3>
-              <p className="text-lg text-gray-800 mt-2">Base Price: <span className="text-green-600">₹{baseNumericPrice}</span></p>
-              <p className="text-lg text-gray-800 mt-2">Total Price: <span className="text-green-600">₹{totalPrice}</span></p>
-            </div>
-          </div>
+    <div className="bg-[#FAF6F0] min-h-screen py-14">
+      <div className="container mx-auto px-4 sm:px-6">
+        {/* Breadcrumb / Badge */}
+        <div className="mb-8">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-[#1B4332]/10 text-[#1B4332] border border-[#D4A373]/30 text-xs uppercase tracking-widest font-semibold">
+            🌾 जय जोहार • EXPEDITION RESERVATION
+          </span>
         </div>
 
-        {/* Booking Form Section */}
-        <div className="bg-gray-50 rounded-xl shadow-lg p-8">
-          <h3 className="text-3xl font-extrabold text-gray-800 mb-8">Book Your Adventure</h3>
-          <form onSubmit={handleSubmit}>
-            {/* Name Input */}
-            <div className="mb-6">
-              <label className="block text-lg font-medium text-gray-700" htmlFor="name">
-                Full Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="w-full p-4 border-2 border-gray-300 rounded-lg mt-2 focus:outline-none focus:ring-2 focus:ring-green-600 transition-all"
-                placeholder="Enter your full name"
-              />
-              {errors.name && <p className="text-red-500 text-sm mt-2">{errors.name}</p>}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          {/* Trip Details Section (7 cols) */}
+          <div className="lg:col-span-7 bg-white rounded-3xl border border-[#EADBCE] shadow-sm overflow-hidden flex flex-col justify-between">
+            <div>
+              <div className="relative">
+                <img
+                  src={tripDetails.headerImage ? tripDetails.headerImage : tripDetails.image}
+                  alt={tripDetails.title}
+                  className="w-full h-80 object-cover"
+                />
+                {tripDetails.location && (
+                  <div className="absolute bottom-4 left-4 bg-[#11261D]/80 backdrop-blur-sm text-[#E9C46A] text-xs font-bold px-3 py-1.5 rounded-full border border-[#D4A373]/30 flex items-center gap-1.5">
+                    <span>📍</span>
+                    <span>{tripDetails.location}</span>
+                  </div>
+                )}
+              </div>
+              <div className="p-8 sm:p-10">
+                <h2 className="text-3xl sm:text-4xl font-extrabold font-serif text-[#1B4332] leading-tight">
+                  {tripDetails.title}
+                </h2>
+                <p className="text-base text-gray-700 mt-4 leading-relaxed">
+                  {tripDetails.description}
+                </p>
+
+                {tripDetails.inclusions && (
+                  <div className="mt-8 pt-6 border-t border-[#F0E5D3]">
+                    <h4 className="text-sm font-bold uppercase tracking-wider text-[#C84B31] mb-3">
+                      Included in this Expedition
+                    </h4>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-sm text-gray-600">
+                      {tripDetails.inclusions.map((inc, i) => (
+                        <li key={i} className="flex items-center gap-2">
+                          <span className="text-[#1B4332] font-bold">✓</span>
+                          <span>{inc}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Email Input */}
-            <div className="mb-6">
-              <label className="block text-lg font-medium text-gray-700" htmlFor="email">
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full p-4 border-2 border-gray-300 rounded-lg mt-2 focus:outline-none focus:ring-2 focus:ring-green-600 transition-all"
-                placeholder="Enter your email address"
-              />
-              {errors.email && <p className="text-red-500 text-sm mt-2">{errors.email}</p>}
+            <div className="p-8 bg-[#FAF6F0] border-t border-[#EADBCE]">
+              <div className="flex flex-wrap items-baseline justify-between gap-4">
+                <div>
+                  <span className="text-xs text-gray-500 uppercase tracking-wider block">Base Fare</span>
+                  <span className="text-lg font-bold text-gray-700">₹{baseNumericPrice} <span className="text-xs font-normal">/ person</span></span>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs text-gray-500 uppercase tracking-wider block">Calculated Total</span>
+                  <span className="text-3xl font-black text-[#C84B31]">₹{totalPrice}</span>
+                </div>
+              </div>
             </div>
+          </div>
 
-            {/* Phone Input */}
-            <div className="mb-6">
-              <label className="block text-lg font-medium text-gray-700" htmlFor="phone">
-                Phone Number
-              </label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                className="w-full p-4 border-2 border-gray-300 rounded-lg mt-2 focus:outline-none focus:ring-2 focus:ring-green-600 transition-all"
-                placeholder="Enter your phone number"
-              />
-              {errors.phone && <p className="text-red-500 text-sm mt-2">{errors.phone}</p>}
-            </div>
+          {/* Booking Form Section (5 cols) */}
+          <div className="lg:col-span-5 bg-white rounded-3xl border border-[#EADBCE] shadow-sm p-8 sm:p-10">
+            <h3 className="text-2xl font-bold font-serif text-[#1B4332] mb-2">Reserve Your Spot</h3>
+            <p className="text-xs text-gray-500 mb-6">Enter your travel details below to confirm booking and connect with your tribal guide.</p>
 
-            {/* Group Size Selector */}
-            <div className="mb-6">
-              <label className="block text-lg font-medium text-gray-700" htmlFor="groupSize">
-                Group Size
-              </label>
-              <select
-                id="groupSize"
-                name="groupSize"
-                value={formData.groupSize}
-                onChange={handleChange}
-                className="w-full p-4 border-2 border-gray-300 rounded-lg mt-2 focus:outline-none focus:ring-2 focus:ring-green-600 transition-all"
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Name Input */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1" htmlFor="name">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="w-full p-3 bg-[#FAF6F0] border border-[#EADBCE] rounded-xl text-sm focus:outline-none focus:border-[#C84B31] focus:ring-1 focus:ring-[#C84B31] transition"
+                  placeholder="e.g. Ramesh Sahu"
+                />
+                {errors.name && <p className="text-[#C84B31] text-xs mt-1">{errors.name}</p>}
+              </div>
+
+              {/* Email Input */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1" htmlFor="email">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full p-3 bg-[#FAF6F0] border border-[#EADBCE] rounded-xl text-sm focus:outline-none focus:border-[#C84B31] focus:ring-1 focus:ring-[#C84B31] transition"
+                  placeholder="e.g. ramesh@example.com"
+                />
+                {errors.email && <p className="text-[#C84B31] text-xs mt-1">{errors.email}</p>}
+              </div>
+
+              {/* Phone Input */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1" htmlFor="phone">
+                  WhatsApp / Phone Number
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="w-full p-3 bg-[#FAF6F0] border border-[#EADBCE] rounded-xl text-sm focus:outline-none focus:border-[#C84B31] focus:ring-1 focus:ring-[#C84B31] transition"
+                  placeholder="e.g. +91 98765 43210"
+                />
+                {errors.phone && <p className="text-[#C84B31] text-xs mt-1">{errors.phone}</p>}
+              </div>
+
+              {/* Group Size Selector */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1" htmlFor="groupSize">
+                  Group Arrangement
+                </label>
+                <select
+                  id="groupSize"
+                  name="groupSize"
+                  value={formData.groupSize}
+                  onChange={handleChange}
+                  className="w-full p-3 bg-[#FAF6F0] border border-[#EADBCE] rounded-xl text-sm focus:outline-none focus:border-[#C84B31] focus:ring-1 focus:ring-[#C84B31] transition"
+                >
+                  <option value="1">Solo Explorer (1 Person)</option>
+                  <option value="2-5">Small Group (2-5 Persons)</option>
+                  <option value="6-10">Large Group (6-10 Persons)</option>
+                  <option value="Private">Private Dedicated Guide</option>
+                </select>
+                {errors.groupSize && <p className="text-[#C84B31] text-xs mt-1">{errors.groupSize}</p>}
+              </div>
+
+              {/* Date Picker */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1" htmlFor="date">
+                  Preferred Travel Date
+                </label>
+                <input
+                  type="date"
+                  id="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleChange}
+                  min={new Date().toISOString().split('T')[0]}
+                  className="w-full p-3 bg-[#FAF6F0] border border-[#EADBCE] rounded-xl text-sm focus:outline-none focus:border-[#C84B31] focus:ring-1 focus:ring-[#C84B31] transition"
+                />
+                {errors.date && <p className="text-[#C84B31] text-xs mt-1">{errors.date}</p>}
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`w-full py-3.5 bg-[#C84B31] hover:bg-[#9E321C] text-white font-bold rounded-xl shadow-lg transition-all hover:scale-[1.01] mt-2 ${
+                  isSubmitting ? 'opacity-60 cursor-not-allowed' : ''
+                }`}
               >
-                <option value="1">Solo</option>
-                <option value="2-5">Group of 2-5</option>
-                <option value="6-10">Group of 6-10</option>
-                <option value="Private">Private Guide</option>
-              </select>
-              {errors.groupSize && <p className="text-red-500 text-sm mt-2">{errors.groupSize}</p>}
-            </div>
-
-            {/* Date Picker */}
-            <div className="mb-6">
-              <label className="block text-lg font-medium text-gray-700" htmlFor="date">
-                Preferred Date
-              </label>
-              <input
-                type="date"
-                id="date"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-                min={new Date().toISOString().split('T')[0]} // Disable past dates
-                className="w-full p-4 border-2 border-gray-300 rounded-lg mt-2 focus:outline-none focus:ring-2 focus:ring-green-600 transition-all"
-              />
-              {errors.date && <p className="text-red-500 text-sm mt-2">{errors.date}</p>}
-            </div>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className={`w-full bg-green-600 text-white py-3 rounded-lg mt-6 font-bold transition-all hover:bg-green-700 ${
-                isSubmitting ? 'opacity-60 cursor-not-allowed' : ''
-              }`}
-            >
-              {isSubmitting ? 'Confirming Booking...' : 'Book Now'}
-            </button>
-          </form>
+                {isSubmitting ? 'Confirming Reservation...' : 'Confirm Expedition Booking'}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
 
       {/* WhatsApp Booking Confirmation Modal */}
       {confirmedBooking && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-emerald-100 text-center animate-in fade-in zoom-in duration-200">
-            <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-[#EADBCE] text-center animate-in fade-in zoom-in duration-200">
+            <div className="w-16 h-16 bg-[#1B4332]/10 text-[#1B4332] rounded-full flex items-center justify-center mx-auto mb-4 text-3xl font-bold">
               ✓
             </div>
             
-            <h3 className="text-2xl font-extrabold text-gray-900 mb-2">Booking Confirmed!</h3>
-            <p className="text-sm text-gray-600 mb-6">
-              Thank you, <span className="font-semibold text-gray-800">{confirmedBooking.name}</span>! Your booking for <span className="font-semibold text-emerald-700">{confirmedBooking.serviceName}</span> is saved in our system.
+            <h3 className="text-2xl font-bold font-serif text-[#1B4332] mb-2">Booking Confirmed!</h3>
+            <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+              <span className="text-[#C84B31] font-semibold">जय जोहार, {confirmedBooking.name}!</span> Your expedition for <span className="font-bold text-[#1B4332]">{confirmedBooking.serviceName}</span> is confirmed.
             </p>
 
-            <div className="bg-gray-50 rounded-xl p-4 text-left text-xs space-y-2 mb-6 border border-gray-100">
+            <div className="bg-[#FAF6F0] rounded-2xl p-4 text-left text-xs space-y-2 mb-6 border border-[#EADBCE]">
               <div className="flex justify-between text-gray-600">
                 <span>Travel Date:</span>
-                <span className="font-semibold text-gray-800">{confirmedBooking.travelDate || 'TBD'}</span>
+                <span className="font-bold text-[#1B4332]">{confirmedBooking.travelDate || 'TBD'}</span>
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Group Size:</span>
-                <span className="font-semibold text-gray-800">{confirmedBooking.groupDisplay || `${confirmedBooking.numberOfPeople} Persons`}</span>
+                <span className="font-bold text-[#1B4332]">{confirmedBooking.groupDisplay || `${confirmedBooking.numberOfPeople} Persons`}</span>
               </div>
               <div className="flex justify-between text-gray-600">
-                <span>Total Price:</span>
-                <span className="font-bold text-emerald-600 text-sm">₹{confirmedBooking.totalPrice}</span>
+                <span>Total Amount:</span>
+                <span className="font-extrabold text-[#C84B31] text-sm">₹{confirmedBooking.totalPrice}</span>
               </div>
             </div>
 
@@ -346,7 +394,7 @@ const BookingDetail = () => {
                 href={generateOwnerWhatsAppUrl(confirmedBooking)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-3.5 px-4 bg-[#25D366] hover:bg-[#1ebe5b] text-white font-bold rounded-xl flex items-center justify-center gap-2 text-sm shadow-md shadow-emerald-500/20 transition hover:scale-[1.02]"
+                className="w-full py-3.5 px-4 bg-[#25D366] hover:bg-[#1ebe5b] text-white font-bold rounded-xl flex items-center justify-center gap-2 text-sm shadow-md transition hover:scale-[1.02]"
               >
                 <span>💬</span>
                 <span>Send Booking to Guide on WhatsApp</span>

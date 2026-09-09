@@ -1,96 +1,94 @@
 .testimonial-container {
     display: flex;
     justify-content: center;
-    padding: 40px 20px;
-    background-color: #f7f7f7; /* Light grey background */
+    padding: 30px 20px;
+    background-color: #FAF6F0; /* Kosa silk sand background */
 }
 
 .testimonial-card {
-    background-color: #ffffff; /* White background for the card */
-    color: #333333; /* Dark grey text for better readability */
-    max-width: 600px;
+    background-color: #ffffff;
+    color: #1A211D;
+    max-width: 650px;
     width: 100%;
-    border-radius: 12px;
+    border-radius: 16px;
     display: flex;
     flex-direction: row;
     overflow: hidden;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Softer shadow for a subtle floating effect */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effects */
+    border: 1px solid #EADBCE;
+    box-shadow: 0 4px 20px rgba(27, 67, 50, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
 }
 
 .testimonial-card:hover {
-    transform: translateY(-8px); /* Slight hover lift */
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover */
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(200, 75, 49, 0.15);
+    border-color: #D4A373;
 }
 
 .testimonial-image img {
-    width: 100%; /* Make the image take up the full width of its container */
-    height: auto; /* Maintain the aspect ratio */
-    max-width: 140px; /* Ensure the image doesn't get too large */
-    max-height: 140px; /* Max height for the image */
-    object-fit: cover; /* Ensure the image fills the circle, cropping if necessary */
-    border-radius: 50%; /* Circular image */
-    margin: 20px;
+    width: 100%;
+    height: 100%;
+    max-width: 130px;
+    max-height: 130px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin: 24px;
+    border: 3px solid #D4A373;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .testimonial-content {
     flex-grow: 1;
-    padding: 20px;
+    padding: 24px 24px 24px 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .testimonial-text {
     font-style: italic;
-    font-size: 18px;
-    line-height: 1.6;
-    margin-bottom: 20px;
-    color: #666666; /* Lighter grey for text */
+    font-size: 16px;
+    line-height: 1.65;
+    margin-bottom: 16px;
+    color: #4A5568;
+    position: relative;
 }
 
 .testimonial-author {
     display: flex;
     flex-direction: column;
+    border-top: 1px solid #F0E5D3;
+    padding-top: 12px;
 }
 
 .author-name {
-    font-size: 22px;
-    font-weight: bold;
-    color: #333333; /* Dark grey for author name */
+    font-size: 18px;
+    font-weight: 700;
+    color: #1B4332; /* Sal forest deep green */
+    font-family: Georgia, serif;
 }
 
 .author-location {
-    font-size: 14px;
-    color: #888888; /* Lighter grey for the location */
-    margin-top: 5px;
-    font-style: italic;
+    font-size: 13px;
+    color: #C84B31; /* Terracotta */
+    margin-top: 2px;
+    font-weight: 500;
 }
 
 /* Responsive design for smaller screens */
 @media (max-width: 768px) {
     .testimonial-card {
-        flex-direction: column; /* Stack the image and content vertically on smaller screens */
-        align-items: center; /* Center content */
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
     }
 
     .testimonial-image img {
-        max-width: 160px; /* Slightly larger image for tablets */
-        margin-bottom: 15px; /* Add some space below the image */
-    }
-}
-
-@media (max-width: 480px) {
-    .testimonial-text {
-        font-size: 16px; /* Reduce font size for smaller screens */
+        margin: 20px auto 10px auto;
     }
 
-    .author-name {
-        font-size: 18px; /* Reduce the author's name font size */
-    }
-
-    .author-location {
-        font-size: 12px; /* Reduce the location font size */
-    }
-
-    .testimonial-image img {
-        max-width: 160px; /* Increased image size for smaller screens */
+    .testimonial-content {
+        padding: 10px 20px 24px 20px;
     }
 }

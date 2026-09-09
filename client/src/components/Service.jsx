@@ -18,28 +18,47 @@ const categories = [
 
 // ItemCard Component (Memoized for performance optimization)
 const ItemCard = React.memo(({ item, handleBooking }) => (
-  <div className="relative bg-white rounded-xl shadow-lg overflow-hidden hover:scale-105 transition duration-300 flex flex-col justify-between">
-    <LazyLoad height={200} offset={100}>
-      <img src={item.image} alt={item.title} className="w-full h-48 object-cover" />
-    </LazyLoad>
+  <div className="relative bg-white rounded-2xl border border-[#EADBCE] shadow-sm hover:shadow-xl overflow-hidden hover:-translate-y-1 transition duration-300 flex flex-col justify-between group">
+    <div className="relative">
+      <LazyLoad height={200} offset={100}>
+        <img src={item.image} alt={item.title} className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500" />
+      </LazyLoad>
+      <div className="absolute top-3 right-3 bg-[#11261D]/80 backdrop-blur-sm text-[#E9C46A] text-xs font-bold px-3 py-1 rounded-full border border-[#D4A373]/30">
+        ⭐ {item.rating}
+      </div>
+      {item.category && (
+        <div className="absolute bottom-3 left-3 bg-[#C84B31] text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow">
+          {item.category}
+        </div>
+      )}
+    </div>
     <div className="p-6 flex flex-col flex-grow justify-between">
       <div>
-        <div className="flex items-center mb-4">
-          <FontAwesomeIcon icon={faHiking} className="text-green-600 mr-2" size="lg" />
-          <h4 className="text-xl font-semibold text-gray-800">{item.title}</h4>
+        <div className="flex items-center mb-3">
+          <FontAwesomeIcon icon={faHiking} className="text-[#1B4332] mr-2" size="lg" />
+          <h4 className="text-xl font-bold font-serif text-[#1B4332] group-hover:text-[#C84B31] transition">{item.title}</h4>
         </div>
-        <p className="text-sm text-gray-700">{item.description}</p>
+        <p className="text-sm text-gray-600 leading-relaxed line-clamp-2">{item.description}</p>
       </div>
-      <div className="mt-4">
-        <p className="text-sm font-semibold text-green-600">Price: {item.price}</p>
-        <p className="text-sm text-gray-500">Duration: {item.duration}</p>
-        <p className="text-sm text-gray-500">Location: {item.location}</p>
-        <p className="mt-1 text-sm text-yellow-500">Rating: {item.rating} ⭐</p>
+      <div className="mt-5 pt-4 border-t border-[#F0E5D3]">
+        <div className="flex items-baseline justify-between mb-2">
+          <div>
+            <span className="text-xs text-gray-500 block">Starting from</span>
+            <span className="text-xl font-extrabold text-[#C84B31]">{item.price}</span>
+          </div>
+          <div className="text-right">
+            <span className="text-xs text-gray-500 block">Duration</span>
+            <span className="text-xs font-bold text-[#1B4332]">{item.duration}</span>
+          </div>
+        </div>
+        <p className="text-xs text-gray-500 mb-4 flex items-center gap-1">
+          <span>📍</span> {item.location}
+        </p>
         <button
           onClick={() => handleBooking(item)}
-          className="mt-4 w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300"
+          className="w-full py-2.5 bg-[#C84B31] hover:bg-[#9E321C] text-white font-bold rounded-xl shadow transition duration-200"
         >
-          Book Now
+          Book Expedition
         </button>
       </div>
     </div>
@@ -193,55 +212,82 @@ const ServicesAndTrips = () => {
   const noDataFound = filteredItems.length === 0;
 
   return (
-    <div className="container mx-auto px-4 py-10 bg-green-50">
-      <h2 className="text-4xl font-semibold text-black text-center mb-8">Explore Services and Trips in Chhattisgarh</h2>
+    <div className="bg-[#FAF6F0] min-h-screen py-12">
+      <div className="container mx-auto px-4 sm:px-6">
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-10">
+          <span className="inline-block px-4 py-1 rounded-full bg-[#1B4332]/10 text-[#1B4332] border border-[#D4A373]/40 text-xs uppercase tracking-widest font-semibold mb-3">
+            🌾 जय जोहार • DANDAKARANYA EXPEDITIONS
+          </span>
+          <h2 className="text-3xl md:text-5xl font-extrabold font-serif text-[#1B4332] mb-4">
+            Explore Services & Forest Trails
+          </h2>
+          <p className="text-sm md:text-base text-gray-600 leading-relaxed">
+            From the misty plateaus of Saroda Dadar to the thunderous Chitrakote cascades, pick your next wilderness escape across the 36 Forts of Central India.
+          </p>
+        </div>
 
-      <div className="mb-8 text-center">
-        {categories.map((category, index) => (
-          <button
-            key={index}
-            onClick={() => setSelectedCategory(category)}
-            className={`px-4 py-2 mx-2 text-lg font-semibold ${selectedCategory === category ? "bg-green-600 text-white" : "bg-green-200 text-green-800"} rounded-lg hover:bg-green-500 hover:text-white transition duration-300`}
-            aria-pressed={selectedCategory === category}
-          >
-            {category}
-          </button>
-        ))}
+        {/* Category Filters */}
+        <div className="mb-8 flex flex-wrap items-center justify-center gap-2 max-w-4xl mx-auto">
+          {categories.map((category, index) => (
+            <button
+              key={index}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-4 py-2 text-sm font-semibold rounded-xl transition duration-200 ${
+                selectedCategory === category
+                  ? "bg-[#C84B31] text-white shadow-md shadow-[#C84B31]/20 scale-105"
+                  : "bg-white text-[#1B4332] border border-[#EADBCE] hover:bg-[#F0E5D3]"
+              }`}
+              aria-pressed={selectedCategory === category}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
+        {/* Search Bar */}
+        <div className="mb-10 relative max-w-md mx-auto">
+          <input
+            type="text"
+            className="w-full pl-11 pr-4 py-3 bg-white border-2 border-[#EADBCE] rounded-xl text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#C84B31] focus:ring-1 focus:ring-[#C84B31] shadow-sm transition"
+            placeholder="Search by location, trail, or keyword..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            aria-label="Search services and trips"
+          />
+          <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#D4A373] text-base" />
+        </div>
+
+        {loading && <SpinnerWithIcon />}
+        {error && <div className="text-center text-[#C84B31] font-medium bg-red-50 p-4 rounded-xl max-w-md mx-auto mb-6">{error}</div>}
+        {noDataFound && (
+          <div className="text-center text-gray-500 py-12 bg-white rounded-2xl border border-[#EADBCE] max-w-md mx-auto p-8">
+            <p className="text-3xl mb-3">🧭</p>
+            <p className="font-semibold text-[#1B4332]">No expeditions found</p>
+            <p className="text-xs text-gray-500 mt-1">Try searching with a different keyword or selecting "All" categories.</p>
+          </div>
+        )}
+
+        {/* Expeditions Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredItems.map((item) => (
+            <ItemCard key={item.title} item={item} handleBooking={handleBooking} />
+          ))}
+        </div>
       </div>
 
-      <div className="mb-8 relative max-w-md mx-auto">
-        <input
-          type="text"
-          className="w-full pl-10 pr-4 py-2 border border-green-500 rounded-lg"
-          placeholder="Search by title or description..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          aria-label="Search services and trips"
-        />
-        <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-      </div>
-
-      {loading && <SpinnerWithIcon />}
-      {error && <div className="text-center text-red-600">{error}</div>}
-      {noDataFound && <div className="text-center text-gray-500">No services or trips found for the selected category. Try different keywords or clear filters.</div>}
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {filteredItems.map((item) => (
-          <ItemCard key={item.title} item={item} handleBooking={handleBooking} />
-        ))}
-      </div>
-
+      {/* Booking Modal */}
       {isBookingModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-white p-6 rounded-2xl max-w-md w-full shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white p-6 sm:p-8 rounded-3xl max-w-md w-full shadow-2xl border border-[#EADBCE] animate-in fade-in zoom-in duration-200">
             {confirmedBooking ? (
               <div className="text-center">
-                <div className="w-14 h-14 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl font-bold">
+                <div className="w-16 h-16 bg-[#1B4332]/10 text-[#1B4332] rounded-full flex items-center justify-center mx-auto mb-4 text-3xl font-bold">
                   ✓
                 </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">Booking Confirmed!</h3>
-                <p className="text-sm text-gray-600 mb-5">
-                  Thank you, <span className="font-semibold text-gray-800">{confirmedBooking.name}</span>! Your request for <span className="font-semibold text-green-700">{confirmedBooking.serviceName}</span> has been received.
+                <h3 className="text-2xl font-bold font-serif text-[#1B4332] mb-2">Booking Confirmed!</h3>
+                <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+                  <span className="text-[#C84B31] font-semibold">जय जोहार, {confirmedBooking.name}!</span> Your request for <span className="font-bold text-[#1B4332]">{confirmedBooking.serviceName}</span> is safely registered.
                 </p>
 
                 <div className="space-y-3">
@@ -249,7 +295,7 @@ const ServicesAndTrips = () => {
                     href={generateOwnerWhatsAppUrl(confirmedBooking)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full py-3 px-4 bg-[#25D366] hover:bg-[#1ebe5b] text-white font-bold rounded-xl flex items-center justify-center gap-2 text-sm shadow-md transition hover:scale-[1.02]"
+                    className="w-full py-3.5 px-4 bg-[#25D366] hover:bg-[#1ebe5b] text-white font-bold rounded-xl flex items-center justify-center gap-2 text-sm shadow-md transition hover:scale-[1.02]"
                   >
                     <span>💬</span>
                     <span>Send Booking to Guide on WhatsApp</span>
@@ -258,7 +304,7 @@ const ServicesAndTrips = () => {
                   <button
                     type="button"
                     onClick={handleModalClose}
-                    className="w-full py-2 text-xs text-gray-500 hover:text-gray-800 font-medium"
+                    className="w-full py-2.5 text-xs text-gray-500 hover:text-gray-800 font-medium"
                   >
                     Close & Return
                   </button>
@@ -266,80 +312,83 @@ const ServicesAndTrips = () => {
               </div>
             ) : (
               <div>
-                <div className="mb-4 pb-3 border-b border-gray-100">
-                  <h3 className="text-xl font-bold text-gray-800">{bookingDetails.itemName}</h3>
-                  <div className="flex flex-wrap gap-2 text-xs text-gray-500 mt-1">
+                <div className="mb-5 pb-4 border-b border-[#F0E5D3]">
+                  <span className="text-[11px] font-bold text-[#C84B31] uppercase tracking-wider block mb-1">
+                    EXPEDITION RESERVATION
+                  </span>
+                  <h3 className="text-xl font-bold font-serif text-[#1B4332]">{bookingDetails.itemName}</h3>
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500 mt-2">
                     {bookingDetails.serviceOrTrip && (
-                      <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded font-medium">
+                      <span className="bg-[#FAF6F0] border border-[#EADBCE] text-[#1B4332] px-2 py-0.5 rounded font-medium">
                         {bookingDetails.serviceOrTrip}
                       </span>
                     )}
                     {bookingDetails.price > 0 && (
-                      <span className="font-semibold text-green-700">
+                      <span className="font-bold text-[#C84B31]">
                         ₹{bookingDetails.price}
                       </span>
                     )}
                     {bookingDetails.location && (
-                      <span>• {bookingDetails.location}</span>
+                      <span>• 📍 {bookingDetails.location}</span>
                     )}
                   </div>
                 </div>
 
                 <form onSubmit={(e) => { e.preventDefault(); handleBookingSubmit(); }}>
-                  <div className="mb-3">
-                    <label className="block text-xs font-semibold text-gray-600 mb-1">Your Name</label>
+                  <div className="mb-3.5">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">Full Name</label>
                     <input
                       type="text"
                       name="name"
-                      placeholder="Enter your name"
+                      placeholder="e.g. Ramesh Sahu"
                       value={bookingDetails.name}
                       onChange={handleChange}
-                      className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full p-3 border border-[#EADBCE] rounded-xl text-sm focus:outline-none focus:border-[#C84B31] focus:ring-1 focus:ring-[#C84B31] bg-[#FAF6F0]"
                       required
                     />
                   </div>
-                  <div className="mb-3">
-                    <label className="block text-xs font-semibold text-gray-600 mb-1">Email Address</label>
+                  <div className="mb-3.5">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">Email Address</label>
                     <input
                       type="email"
                       name="email"
-                      placeholder="Enter your email"
+                      placeholder="e.g. ramesh@example.com"
                       value={bookingDetails.email}
                       onChange={handleChange}
-                      className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full p-3 border border-[#EADBCE] rounded-xl text-sm focus:outline-none focus:border-[#C84B31] focus:ring-1 focus:ring-[#C84B31] bg-[#FAF6F0]"
                       required
                     />
                   </div>
                   <div className="mb-4">
-                    <label className="block text-xs font-semibold text-gray-600 mb-1">Phone / WhatsApp Number</label>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">WhatsApp / Contact Number</label>
                     <input
                       type="tel"
                       name="phone"
                       placeholder="e.g. +91 98765 43210"
                       value={bookingDetails.phone}
                       onChange={handleChange}
-                      className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full p-3 border border-[#EADBCE] rounded-xl text-sm focus:outline-none focus:border-[#C84B31] focus:ring-1 focus:ring-[#C84B31] bg-[#FAF6F0]"
                     />
                   </div>
 
-                  {error && <div className="text-red-600 text-xs mb-3 font-medium bg-red-50 p-2 rounded">{error}</div>}
+                  {error && <div className="text-[#C84B31] text-xs mb-3 font-medium bg-red-50 p-2.5 rounded-lg border border-red-100">{error}</div>}
 
-                  <div className="flex justify-end gap-2">
+                  <div className="flex justify-end gap-2.5 pt-2">
                     <button
                       type="button"
                       onClick={handleModalClose}
-                      className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition"
+                      className="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-xs font-semibold hover:bg-gray-200 transition"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className={`px-5 py-2 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700 transition ${
+                      className={`px-5 py-2.5 bg-[#C84B31] hover:bg-[#9E321C] text-white rounded-xl text-xs font-bold shadow-md transition ${
                         isSubmitting ? 'opacity-60 cursor-not-allowed' : ''
                       }`}
                     >
-                      {isSubmitting ? 'Confirming...' : 'Confirm Booking'}
+                      {isSubmitting ? 'Confirming...' : 'Confirm Expedition'}
                     </button>
                   </div>
                 </form>
