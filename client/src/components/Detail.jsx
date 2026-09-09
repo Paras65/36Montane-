@@ -5,6 +5,7 @@ import { isValidPhoneNumber } from "libphonenumber-js";
 import { useLocation } from "react-router-dom";
 import { mockFeaturedTrips } from "../data/mockData";
 import { generateOwnerWhatsAppUrl } from "../utils/whatsapp";
+import UpiPaymentModal from "./UpiPaymentModal";
 
 const BookingDetail = () => {
   const location = useLocation();
@@ -126,6 +127,7 @@ const BookingDetail = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmedBooking, setConfirmedBooking] = useState(null);
+  const [showUpiModal, setShowUpiModal] = useState(false);
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -390,11 +392,20 @@ const BookingDetail = () => {
             </div>
 
             <div className="space-y-3">
+              <button
+                type="button"
+                onClick={() => setShowUpiModal(true)}
+                className="w-full py-3 px-4 bg-gradient-to-r from-[#11261D] to-[#1B4332] hover:from-[#1B4332] hover:to-[#2D6A4F] text-amber-200 font-bold rounded-xl flex items-center justify-center gap-2 text-xs sm:text-sm shadow-md transition border border-amber-400/30"
+              >
+                <span>💳</span>
+                <span>Pay Token Advance via UPI QR</span>
+              </button>
+
               <a
                 href={generateOwnerWhatsAppUrl(confirmedBooking)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-3.5 px-4 bg-[#25D366] hover:bg-[#1ebe5b] text-white font-bold rounded-xl flex items-center justify-center gap-2 text-sm shadow-md transition hover:scale-[1.02]"
+                className="w-full py-3.5 px-4 bg-[#25D366] hover:bg-[#1ebe5b] text-white font-bold rounded-xl flex items-center justify-center gap-2 text-xs sm:text-sm shadow-md transition hover:scale-[1.02]"
               >
                 <span>💬</span>
                 <span>Send Booking to Guide on WhatsApp</span>
@@ -402,13 +413,20 @@ const BookingDetail = () => {
 
               <button
                 onClick={() => setConfirmedBooking(null)}
-                className="w-full py-2.5 text-xs text-gray-500 hover:text-gray-800 font-medium transition"
+                className="w-full py-2 text-xs text-gray-500 hover:text-gray-800 font-medium transition"
               >
                 Close & Return
               </button>
             </div>
           </div>
         </div>
+      )}
+
+      {showUpiModal && confirmedBooking && (
+        <UpiPaymentModal
+          booking={confirmedBooking}
+          onClose={() => setShowUpiModal(false)}
+        />
       )}
     </div>
   );

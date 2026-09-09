@@ -16,6 +16,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import CustomTripSection from "./CustomTripSelection";
 import LiveWeather from "./LiveWeather";
+import TrailMap from "./TrailMap";
 import { mockFeaturedTrips, mockServices } from "../data/mockData";
 import { getOwnerWhatsAppNumber } from "../utils/whatsapp";
 
@@ -175,6 +176,9 @@ const Homepage = () => {
 
       {/* ==================== LIVE SATELLITE WEATHER RADAR & FORECAST ==================== */}
       <LiveWeather />
+
+      {/* ==================== INTERACTIVE TRAIL TOPOGRAPHY & BASECAMP MAP ==================== */}
+      <TrailMap />
 
       {/* ==================== 3. CULTURAL SHOWCASE: THE ESSENCE OF CHHATTISGARH ==================== */}
       <section className="py-20 bg-[#FAF6F0]">

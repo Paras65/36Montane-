@@ -90,3 +90,31 @@ How can we assist you with your upcoming trekking or camping journey? 🏔️⛺
   return `https://wa.me/${customerPhone}?text=${encodeURIComponent(text)}`;
 };
 
+/**
+ * Returns UPI ID configured in .env or fallback
+ */
+export const getUpiId = () => {
+  return import.meta.env.VITE_UPI_ID || '36montane@upi';
+};
+
+/**
+ * Generates WhatsApp click-to-chat URL when customer completes token advance
+ */
+export const generatePaymentConfirmationWhatsAppUrl = (booking, advanceAmount) => {
+  const ownerNumber = getOwnerWhatsAppNumber();
+  const text = 
+`🙏 *जय जोहार! Token Advance Payment Screenshot*
+━━━━━━━━━━━━━━━━━━━━
+👤 *Customer:* ${booking.name || 'Explorer'}
+📱 *Phone:* ${booking.phone || 'N/A'}
+🌲 *Expedition:* ${booking.serviceName || booking.tripTitle || 'Adventure Trek'}
+📅 *Date:* ${booking.travelDate || booking.date || 'TBD'}
+👥 *Group Size:* ${booking.groupDisplay || `${booking.numberOfPeople || 1} Persons`}
+💵 *Advance Paid:* ₹${advanceAmount}
+💰 *Total Fare:* ₹${booking.totalPrice || 0}
+━━━━━━━━━━━━━━━━━━━━
+I have initiated the UPI token advance for my slot. Attached is the payment confirmation screenshot!`;
+
+  return `https://wa.me/${ownerNumber}?text=${encodeURIComponent(text)}`;
+};
+

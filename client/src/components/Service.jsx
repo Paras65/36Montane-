@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { mockServices } from '../data/mockData';
 import { generateOwnerWhatsAppUrl } from '../utils/whatsapp';
+import UpiPaymentModal from './UpiPaymentModal';
 
 // Categories for filtering
 const categories = [
@@ -86,6 +87,7 @@ const ServicesAndTrips = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmedBooking, setConfirmedBooking] = useState(null);
+  const [showUpiModal, setShowUpiModal] = useState(false);
 
   // Fetch data function with improved API binding
   const fetchData = useCallback(async () => {
@@ -203,6 +205,7 @@ const ServicesAndTrips = () => {
     setIsBookingModalOpen(false);
     setError(null);
     setConfirmedBooking(null);
+    setShowUpiModal(false);
   };
 
   const handleChange = (e) => {
@@ -291,6 +294,15 @@ const ServicesAndTrips = () => {
                 </p>
 
                 <div className="space-y-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowUpiModal(true)}
+                    className="w-full py-3.5 px-4 bg-gradient-to-r from-[#11261D] to-[#1B4332] hover:from-[#1B4332] hover:to-[#2D6A4F] text-amber-200 font-bold rounded-xl flex items-center justify-center gap-2 text-xs sm:text-sm shadow-md transition border border-amber-400/30"
+                  >
+                    <span>💳</span>
+                    <span>Pay Token Advance via UPI QR</span>
+                  </button>
+
                   <a
                     href={generateOwnerWhatsAppUrl(confirmedBooking)}
                     target="_blank"
@@ -396,6 +408,13 @@ const ServicesAndTrips = () => {
             )}
           </div>
         </div>
+      )}
+
+      {showUpiModal && confirmedBooking && (
+        <UpiPaymentModal
+          booking={confirmedBooking}
+          onClose={() => setShowUpiModal(false)}
+        />
       )}
     </div>
   );

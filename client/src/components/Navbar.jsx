@@ -68,6 +68,14 @@ const Navbar = () => {
           {/* Right Action CTA Button (Desktop) */}
           <div className="hidden sm:flex items-center gap-3">
             <LiveWeather isCompact={true} />
+            <a
+              href="/home#trail-map"
+              className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#1B4332] text-amber-200 hover:text-white hover:bg-[#2D6A4F] border border-amber-500/20 transition"
+              title="View interactive trail topography & basecamps"
+            >
+              <span>🗺️</span>
+              <span>Trail Map</span>
+            </a>
             <span className="hidden xl:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#1B4332] text-amber-200 border border-amber-500/20">
               <span>🙏</span>
               <span>जय जोहार</span>
@@ -132,6 +140,14 @@ const Navbar = () => {
                   {label}
                 </NavLink>
               ))}
+              <a
+                href="/home#trail-map"
+                onClick={handleLinkClick}
+                className="text-amber-100/85 hover:bg-emerald-900/60 hover:text-amber-200 px-3.5 py-1.5 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-2"
+              >
+                <span>🗺️</span>
+                <span>Interactive Trail Map</span>
+              </a>
             </div>
           </div>
         )}
