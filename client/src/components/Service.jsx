@@ -36,7 +36,7 @@ const ItemCard = React.memo(({ item, handleBooking }) => (
         <p className="text-sm text-gray-500">Location: {item.location}</p>
         <p className="mt-1 text-sm text-yellow-500">Rating: {item.rating} ⭐</p>
         <button
-          onClick={() => handleBooking(item.type, item.title)}
+          onClick={() => handleBooking(item)}
           className="mt-4 w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300"
         >
           Book Now
@@ -54,7 +54,18 @@ const ServicesAndTrips = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-  const [bookingDetails, setBookingDetails] = useState({ name: '', email: '', phone: '', serviceOrTrip: '', itemName: '' });
+  const [bookingDetails, setBookingDetails] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    serviceOrTrip: '',
+    itemName: '',
+    tripId: '675c9a8391b1dffb0e46bdf3',
+    price: 0,
+    duration: '',
+    location: '',
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmedBooking, setConfirmedBooking] = useState(null);
 
   // Fetch data function with improved API binding
@@ -103,8 +114,23 @@ const ServicesAndTrips = () => {
     (selectedCategory === "All" || item.category === selectedCategory)
   );
 
-  const handleBooking = (itemType, itemName) => {
-    setBookingDetails({ name: '', email: '', phone: '', serviceOrTrip: itemType, itemName: itemName });
+  const handleBooking = (item) => {
+    const rawPrice = item?.price ? String(item.price).replace(/[^0-9]/g, '') : '0';
+    const numericPrice = Number(rawPrice) || 0;
+    const isValidHexId = item?._id && /^[0-9a-fA-F]{24}$/.test(item._id);
+    const resolvedTripId = isValidHexId ? item._id : '675c9a8391b1dffb0e46bdf3';
+
+    setBookingDetails({
+      name: '',
+      email: '',
+      phone: '',
+      serviceOrTrip: item?.category || item?.type || 'Adventure Service',
+      itemName: item?.title || 'Adventure Service',
+      tripId: resolvedTripId,
+      price: numericPrice,
+      duration: item?.duration || '',
+      location: item?.location || '',
+    });
     setConfirmedBooking(null);
     setError(null);
     setIsBookingModalOpen(true);
@@ -122,6 +148,8 @@ const ServicesAndTrips = () => {
       return;
     }
 
+    setIsSubmitting(true);
+    setError(null);
     try {
       const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
       const payload = {
@@ -129,20 +157,26 @@ const ServicesAndTrips = () => {
         email: bookingDetails.email,
         phone: bookingDetails.phone,
         numberOfPeople: 1,
+        tripId: bookingDetails.tripId || '675c9a8391b1dffb0e46bdf3',
         service: bookingDetails.itemName,
         serviceName: `${bookingDetails.itemName} (${bookingDetails.serviceOrTrip || 'Service'})`,
         travelDate: new Date().toISOString().split('T')[0],
-        totalPrice: 0,
+        totalPrice: bookingDetails.price || 0,
       };
 
-      await axios.post(`${baseUrl}/api/booking`, payload);
-      toast.success(`Booking confirmed for ${bookingDetails.itemName}!`);
-      setConfirmedBooking(payload);
-      setError(null);
+      const res = await axios.post(`${baseUrl}/api/booking`, payload);
+      if (res.status === 200 || res.status === 201) {
+        toast.success(`Booking confirmed for ${bookingDetails.itemName}!`);
+        setConfirmedBooking(payload);
+        setError(null);
+      }
     } catch (err) {
       console.error('Service booking error:', err);
-      setError(err.response?.data?.error || err.response?.data?.message || 'Failed to submit booking');
-      toast.error('Booking submission failed. Please try again.');
+      const errMsg = err.response?.data?.error || err.response?.data?.message || 'Failed to submit booking. Please try again.';
+      setError(errMsg);
+      toast.error(errMsg);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -232,7 +266,25 @@ const ServicesAndTrips = () => {
               </div>
             ) : (
               <div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">Book {bookingDetails.itemName}</h3>
+                <div className="mb-4 pb-3 border-b border-gray-100">
+                  <h3 className="text-xl font-bold text-gray-800">{bookingDetails.itemName}</h3>
+                  <div className="flex flex-wrap gap-2 text-xs text-gray-500 mt-1">
+                    {bookingDetails.serviceOrTrip && (
+                      <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded font-medium">
+                        {bookingDetails.serviceOrTrip}
+                      </span>
+                    )}
+                    {bookingDetails.price > 0 && (
+                      <span className="font-semibold text-green-700">
+                        ₹{bookingDetails.price}
+                      </span>
+                    )}
+                    {bookingDetails.location && (
+                      <span>• {bookingDetails.location}</span>
+                    )}
+                  </div>
+                </div>
+
                 <form onSubmit={(e) => { e.preventDefault(); handleBookingSubmit(); }}>
                   <div className="mb-3">
                     <label className="block text-xs font-semibold text-gray-600 mb-1">Your Name</label>
@@ -270,7 +322,7 @@ const ServicesAndTrips = () => {
                     />
                   </div>
 
-                  {error && <div className="text-red-600 text-xs mb-3">{error}</div>}
+                  {error && <div className="text-red-600 text-xs mb-3 font-medium bg-red-50 p-2 rounded">{error}</div>}
 
                   <div className="flex justify-end gap-2">
                     <button
@@ -282,9 +334,12 @@ const ServicesAndTrips = () => {
                     </button>
                     <button
                       type="submit"
-                      className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700 transition"
+                      disabled={isSubmitting}
+                      className={`px-5 py-2 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-700 transition ${
+                        isSubmitting ? 'opacity-60 cursor-not-allowed' : ''
+                      }`}
                     >
-                      Confirm Booking
+                      {isSubmitting ? 'Confirming...' : 'Confirm Booking'}
                     </button>
                   </div>
                 </form>

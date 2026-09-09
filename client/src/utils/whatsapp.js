@@ -86,3 +86,4 @@ How can we assist you with your upcoming trekking or camping journey? 🏔️⛺
 
   return `https://wa.me/${customerPhone}?text=${encodeURIComponent(text)}`;
 };
+

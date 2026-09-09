@@ -51,6 +51,7 @@ const Booking = () => {
         email: formData.email,
         phone: formData.phone,
         numberOfPeople: 1,
+        tripId: '675c9a8391b1dffb0e46bdf3',
         service: formData.service,
         serviceName: formData.service,
         travelDate: formData.date,

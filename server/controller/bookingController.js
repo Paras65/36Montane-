@@ -24,7 +24,8 @@ const createBooking = async (req, res) => {
     const trimmedPhone = phone ? String(phone).trim() : '';
     const resolvedTravelDate = travelDate || date || '';
     const resolvedServiceName = serviceName || service || '';
-    const resolvedTripId = tripId || resolvedServiceName || '36-montane-adventure';
+    const isValidHexId = (id) => typeof id === 'string' && /^[0-9a-fA-F]{24}$/.test(id);
+    const resolvedTripId = isValidHexId(tripId) ? tripId : '675c9a8391b1dffb0e46bdf3';
 
     // Parse group size
     let peopleCount = parseInt(numberOfPeople || groupSize, 10);
