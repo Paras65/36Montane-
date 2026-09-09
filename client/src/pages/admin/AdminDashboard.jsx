@@ -79,11 +79,79 @@ const AdminDashboard = () => {
     platform: 'instagram',
   });
 
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+
   const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
   const showNotification = (msg, type = 'success') => {
     setNotification({ msg, type });
     setTimeout(() => setNotification(null), 4000);
+  };
+
+  const exportBookingsToCSV = () => {
+    if (!bookings || bookings.length === 0) {
+      showNotification('No bookings to export', 'error');
+      return;
+    }
+
+    const headers = ['Booking ID', 'Customer Name', 'Email', 'Phone', 'Service / Trip', 'Group Size', 'Status', 'Travel Date', 'Price (INR)', 'Booking Date'];
+    const rows = bookings.map(b => [
+      `"${b._id || ''}"`,
+      `"${(b.name || '').replace(/"/g, '""')}"`,
+      `"${(b.email || '').replace(/"/g, '""')}"`,
+      `"${(b.phone || '').replace(/"/g, '""')}"`,
+      `"${(b.serviceName || b.tripTitle || b.service || '').replace(/"/g, '""')}"`,
+      b.numberOfPeople || 1,
+      `"${b.status || 'Confirmed'}"`,
+      `"${b.travelDate || (b.bookingDate ? new Date(b.bookingDate).toLocaleDateString() : '')}"`,
+      b.totalPrice || 0,
+      `"${b.bookingDate ? new Date(b.bookingDate).toISOString() : ''}"`,
+    ]);
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    const dateStr = new Date().toISOString().split('T')[0];
+    link.setAttribute('download', `36montane_bookings_${dateStr}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showNotification('Bookings exported to CSV successfully!');
+  };
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      showNotification('New passwords do not match', 'error');
+      return;
+    }
+    if (passwordForm.newPassword.length < 6) {
+      showNotification('New password must be at least 6 characters long', 'error');
+      return;
+    }
+    setIsChangingPassword(true);
+    try {
+      const res = await authFetch(`${baseUrl}/api/auth/change-password`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          currentPassword: passwordForm.currentPassword,
+          newPassword: passwordForm.newPassword,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Failed to update password');
+      showNotification('Password updated successfully!');
+      setIsPasswordModalOpen(false);
+      setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    } catch (err) {
+      showNotification(err.message, 'error');
+    } finally {
+      setIsChangingPassword(false);
+    }
   };
 
   // Secure authenticated fetch helper: attaches JWT token and auto-redirects on expiry
@@ -518,6 +586,30 @@ const AdminDashboard = () => {
               {health?.dbConnected ? 'MongoDB Live' : 'Offline Mock Mode'}
             </span>
           </div>
+
+          <button
+            onClick={() => setIsPasswordModalOpen(true)}
+            className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition flex items-center gap-1.5"
+            title="Change Admin Password"
+          >
+            <span>🔑</span>
+            <span className="hidden sm:inline">Password</span>
+          </button>
+
+          <button
+            onClick={() => {
+              if (window.confirm('Are you sure you want to log out?')) {
+                localStorage.removeItem('adminToken');
+                localStorage.removeItem('adminUser');
+                window.location.href = '/admin/login';
+              }
+            }}
+            className="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-semibold rounded-lg border border-red-500/20 transition flex items-center gap-1.5"
+            title="Log Out of Dashboard"
+          >
+            <span>🚪</span>
+            <span className="hidden sm:inline">Logout</span>
+          </button>
         </div>
       </div>
 
@@ -905,6 +997,27 @@ const AdminDashboard = () => {
         {/* ==================== 4. BOOKINGS TAB ==================== */}
         {activeTab === 'bookings' && (
           <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/80 border border-slate-800 p-4 rounded-2xl">
+              <div>
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <span>Adventure Reservations Manifest</span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30">
+                    {bookings.length} Total
+                  </span>
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Manage reservations, send 1-click WhatsApp confirmations, or download passenger manifests
+                </p>
+              </div>
+              <button
+                onClick={exportBookingsToCSV}
+                className="self-start sm:self-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-emerald-950"
+              >
+                <span>📥</span>
+                <span>Export to CSV</span>
+              </button>
+            </div>
+
             <div className="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
@@ -1624,6 +1737,77 @@ const AdminDashboard = () => {
                   className="px-5 py-2 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl"
                 >
                   Add Media
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 6. Change Password Modal */}
+      {isPasswordModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
+              <span>🔑</span>
+              <span>Change Admin Password</span>
+            </h3>
+            <p className="text-xs text-slate-400 mb-4">
+              Update your administrative login credentials to maintain portal security.
+            </p>
+            <form onSubmit={handleChangePassword} className="space-y-3 text-xs">
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">Current Password</label>
+                <input
+                  type="password"
+                  value={passwordForm.currentPassword}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+                  required
+                  placeholder="Enter current password"
+                  className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">New Password</label>
+                <input
+                  type="password"
+                  value={passwordForm.newPassword}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                  required
+                  placeholder="Minimum 6 characters"
+                  className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">Confirm New Password</label>
+                <input
+                  type="password"
+                  value={passwordForm.confirmPassword}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                  required
+                  placeholder="Re-enter new password"
+                  className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-4 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsPasswordModalOpen(false);
+                    setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                  }}
+                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isChangingPassword}
+                  className={`px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl transition ${
+                    isChangingPassword ? 'opacity-60 cursor-not-allowed' : ''
+                  }`}
+                >
+                  {isChangingPassword ? 'Updating...' : 'Update Password'}
                 </button>
               </div>
             </form>

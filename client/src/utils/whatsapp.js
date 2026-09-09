@@ -39,7 +39,7 @@ export const generateOwnerWhatsAppUrl = (booking) => {
 📅 *Travel Date:* ${booking.travelDate || booking.date || 'TBD'}
 💰 *Total Amount:* ₹${booking.totalPrice || 0}
 ━━━━━━━━━━━━━━━━━━━━
-Hello 36 Montane! I just placed this booking on your website. Please confirm availability and next steps!`;
+Hello 36 Montane! I just placed this booking on your website. Please confirm availability and share UPI details if a token advance is required!`;
 
   return `https://wa.me/${ownerNumber}?text=${encodeURIComponent(text)}`;
 };
@@ -62,8 +62,11 @@ We have received and *CONFIRMED* your booking for:
 📅 Date: ${booking.travelDate || (booking.bookingDate ? new Date(booking.bookingDate).toLocaleDateString() : 'Upcoming')}
 ${booking.totalPrice ? `💰 Total: ₹${booking.totalPrice}` : ''}
 
-🎒 Our team is excited to host you!
-Please reply here if you have any questions about packing gear, travel directions, or dietary requirements.`;
+🎒 *Trip Next Steps:*
+1. Reply here with your pickup location and any dietary preferences.
+2. If you'd like to pay the token advance via UPI or need our packing checklist, let us know!
+
+Our team is excited to host your expedition in Chhattisgarh!`;
 
   return `https://wa.me/${customerPhone}?text=${encodeURIComponent(text)}`;
 };

@@ -128,4 +128,61 @@ const getMe = async (req, res) => {
     return res.status(401).json({ message: 'Not authenticated' });
 };
 
-module.exports = { register, login, getMe };
+// Change password for authenticated admin user
+const changePassword = async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user?.id || req.user?._id;
+
+    if (!currentPassword || !newPassword) {
+        return res.status(400).json({ message: 'Current password and new password are required' });
+    }
+
+    if (newPassword.length < 6) {
+        return res.status(400).json({ message: 'New password must be at least 6 characters long' });
+    }
+
+    try {
+        let user = null;
+        if (userId && userId !== 'admin-001') {
+            user = await User.findById(userId);
+        }
+        if (!user && req.user?.username) {
+            user = await User.findOne({ username: req.user.username });
+        }
+
+        if (!user) {
+            const defaultAdminPass = process.env.ADMIN_PASSWORD || 'admin123';
+            if (currentPassword !== defaultAdminPass) {
+                return res.status(400).json({ message: 'Current password is incorrect' });
+            }
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(newPassword, salt);
+            user = new User({
+                username: req.user?.username || 'admin',
+                email: req.user?.email || 'admin@36montane.com',
+                password: hashedPassword,
+                name: req.user?.name || 'Administrator',
+                role: 'admin'
+            });
+            await user.save();
+            return res.json({ message: 'Password changed successfully' });
+        }
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Current password is incorrect' });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword, salt);
+        await user.save();
+
+        res.json({ message: 'Password changed successfully' });
+    } catch (err) {
+        console.error('Change password error:', err);
+        res.status(500).json({ message: 'Server error updating password' });
+    }
+};
+
+module.exports = { register, login, getMe, changePassword };
+
