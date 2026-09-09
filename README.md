@@ -166,17 +166,24 @@ npm run seed
 
 ---
 
-## 🚀 Production Deployment
+## 🚀 Production Deployment (Render + Vercel)
 
-### Frontend (e.g. Vercel, Netlify)
-1. Set Root Directory to `client`.
-2. Build command: `npm run build`.
-3. Output directory: `dist`.
-4. Add environment variable: `VITE_API_URL=https://your-backend-domain.com`.
+> 📖 **Full step-by-step walkthrough available in [DEPLOYMENT.md](./DEPLOYMENT.md)**.
 
-### Backend (e.g. Render, Railway, DigitalOcean, VPS)
-1. Set Root Directory to `server`.
-2. Build command: `npm install`.
-3. Start command: `node main.js`.
-4. Add environment variables: `PORT=5000`, `MONGODB_URI=...`, `JWT_SECRET=...`, `initURL=https://your-frontend-domain.com`.
+### Frontend on Vercel
+1. In Vercel, import your repository (`Paras65/36Montane-`).
+2. Set **Root Directory** to `client` *(Essential)*.
+3. Framework Preset: **Vite** (auto-detected).
+4. Add Environment Variable:
+   `VITE_API_URL=https://your-backend.onrender.com`
+5. Click **Deploy**. SPA client-side routing is handled automatically by `client/vercel.json`.
+
+### Backend on Render
+1. **Option A (1-Click Blueprint)**: In Render Dashboard, select **New +** > **Blueprint**, connect your repo. Render detects [`render.yaml`](./render.yaml) and configures everything automatically.
+2. **Option B (Manual Web Service)**:
+   - Root Directory: `server`
+   - Build Command: `npm install`
+   - Start Command: `npm start`
+   - Environment Variables: `PORT=10000`, `NODE_ENV=production`, `MONGODB_URI=...`, `JWT_SECRET=...`, `CLIENT_URL=https://your-frontend.vercel.app`
+
 

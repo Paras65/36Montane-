@@ -35,9 +35,12 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// CORS Configuration - Permissive for local development
-const allowedOrigins = [
+// CORS Configuration - Supports Local, Vercel Deployments, and Custom Production Domains
+const configuredOrigins = [
+    process.env.CLIENT_URL,
+    process.env.FRONTEND_URL,
     process.env.initURL,
+    ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim()) : []),
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'http://localhost:5173',
@@ -46,10 +49,30 @@ const allowedOrigins = [
 
 app.use(cors({
     origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
+        // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
+        if (!origin) return callback(null, true);
+
+        // Allow explicitly configured origins
+        if (configuredOrigins.includes(origin)) {
             return callback(null, true);
         }
-        return callback(null, true); // Do not block development origins
+
+        // Allow all Vercel deployments (*.vercel.app)
+        if (/^https?:\/\/([a-z0-9-]+)\.vercel\.app$/i.test(origin)) {
+            return callback(null, true);
+        }
+
+        // Allow all Render deployments (*.onrender.com)
+        if (/^https?:\/\/([a-z0-9-]+)\.onrender\.com$/i.test(origin)) {
+            return callback(null, true);
+        }
+
+        // Fallback for development environments
+        if (process.env.NODE_ENV !== 'production') {
+            return callback(null, true);
+        }
+
+        return callback(new Error(`Origin ${origin} not allowed by CORS`));
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
