@@ -81,10 +81,19 @@ const RecentTrips = () => {
   
 
   return (
-    <div className="recent-trips-container">
-      <h2 className="section-title">Recent Trip Reels, Videos & Photos</h2>
+    <div className="bg-[#FAF6F0] min-h-screen">
+      <div className="recent-trips-container">
+        <div className="mb-6">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-[#1B4332]/10 text-[#1B4332] border border-[#D4A373]/30 text-xs uppercase tracking-widest font-semibold mb-3">
+            🌾 जय जोहार • EXPEDITION CHRONICLES
+          </span>
+          <h2 className="section-title">Trail Reels, Landscapes & Campfire Moments</h2>
+          <p className="text-sm text-gray-600 max-w-2xl mx-auto">
+            Glimpses from the misty Maikal hills, roar of Chitrakote, and starry nights under the sacred Sal canopies of Chhattisgarh.
+          </p>
+        </div>
 
-      {/* Category Filter */}
+        {/* Category Filter */}
       <div className="filter-buttons">
         {["all", "video", "photo"].map((category) => (
           <button
@@ -151,6 +160,7 @@ const RecentTrips = () => {
   </div>
 )}
 
+      </div>
     </div>
   );
 };

@@ -1,0 +1,87 @@
+{
+  "name": "36 Montane - Chhattisgarh Eco-Trekking & Camping",
+  "short_name": "36 Montane",
+  "description": "Explore the 36 Forts, Dandakaranya Sal forests, Chitrakote cascades, and Bastar tribal trails with 36 Montane.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FAF6F0",
+  "theme_color": "#11261D",
+  "lang": "en-IN",
+  "categories": [
+    "travel",
+    "sports",
+    "lifestyle"
+  ],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Book Expedition",
+      "short_name": "Book",
+      "description": "Reserve a trekking or camping slot",
+      "url": "/book",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Explore All Trails",
+      "short_name": "Trails",
+      "description": "View Saroda Dadar, Bastar & Maikal treks",
+      "url": "/service",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Our Heritage Story",
+      "short_name": "Story",
+      "description": "The 36 Forts of Dandakaranya",
+      "url": "/about",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}

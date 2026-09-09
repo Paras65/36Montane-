@@ -86,155 +86,157 @@ const Booking = () => {
   };
 
   return (
-    <div className="container mx-auto p-8 bg-white rounded-lg shadow-lg my-10 max-w-4xl">
-      <h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">
-        Book Your Next Adventure
-      </h2>
+    <div className="bg-[#FAF6F0] min-h-screen py-14">
+      <div className="container mx-auto px-4 sm:px-6 max-w-3xl">
+        <div className="bg-white p-8 sm:p-12 rounded-3xl border border-[#EADBCE] shadow-sm">
+          <div className="text-center mb-8">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-[#1B4332]/10 text-[#1B4332] border border-[#D4A373]/30 text-xs uppercase tracking-widest font-semibold mb-3">
+              🌾 जय जोहार • RESERVE YOUR SPOT
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold font-serif text-[#1B4332]">
+              Book Your Chhattisgarh Expedition
+            </h2>
+            <p className="text-sm text-gray-600 mt-2">
+              Select your trail, pick a travel date, and we'll connect you directly with a local tribal guide.
+            </p>
+          </div>
 
-      {apiMessage && (
-        <div
-          className={`p-5 mb-6 rounded-xl text-center border ${
-            apiMessage.type === 'success'
-              ? 'bg-emerald-50 text-emerald-900 border-emerald-200'
-              : 'bg-red-50 text-red-900 border-red-200'
-          }`}
-        >
-          <p className="font-semibold text-base mb-2">{apiMessage.text}</p>
-          {confirmedBooking && (
-            <div className="mt-3">
-              <a
-                href={generateOwnerWhatsAppUrl(confirmedBooking)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#25D366] hover:bg-[#1ebe5b] text-white font-bold rounded-xl text-sm shadow-md transition hover:scale-105"
-              >
-                <span>💬</span>
-                <span>Send Booking to Guide on WhatsApp</span>
-              </a>
+          {apiMessage && (
+            <div
+              className={`p-6 mb-8 rounded-2xl text-center border ${
+                apiMessage.type === 'success'
+                  ? 'bg-emerald-50 text-emerald-950 border-emerald-200'
+                  : 'bg-red-50 text-red-900 border-red-200'
+              }`}
+            >
+              <p className="font-bold text-base mb-2">{apiMessage.text}</p>
+              {confirmedBooking && (
+                <div className="mt-4">
+                  <a
+                    href={generateOwnerWhatsAppUrl(confirmedBooking)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#25D366] hover:bg-[#1ebe5b] text-white font-bold rounded-xl text-sm shadow-md transition hover:scale-105"
+                  >
+                    <span>💬</span>
+                    <span>Send Booking to Guide on WhatsApp</span>
+                  </a>
+                </div>
+              )}
             </div>
           )}
-        </div>
-      )}
 
-      <form onSubmit={handleSubmit}>
-        {/* Name Input */}
-        <div className="mb-4">
-          <label
-            className="block text-lg font-medium text-gray-700"
-            htmlFor="name"
-          >
-            Full Name
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg mt-2 focus:outline-none focus:ring-2 focus:ring-green-600"
-            placeholder="Enter your full name"
-            required
-          />
-          {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-        </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Name Input */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1" htmlFor="name">
+                Full Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full p-3.5 bg-[#FAF6F0] border border-[#EADBCE] rounded-xl text-sm focus:outline-none focus:border-[#C84B31] focus:ring-1 focus:ring-[#C84B31] text-gray-800 transition"
+                placeholder="e.g. Ramesh Sahu"
+                required
+              />
+              {errors.name && <p className="text-[#C84B31] text-xs mt-1">{errors.name}</p>}
+            </div>
 
-        {/* Email Input */}
-        <div className="mb-4">
-          <label
-            className="block text-lg font-medium text-gray-700"
-            htmlFor="email"
-          >
-            Email Address
-          </label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg mt-2 focus:outline-none focus:ring-2 focus:ring-green-600"
-            placeholder="Enter your email address"
-            required
-          />
-          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-        </div>
+            {/* Email Input */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1" htmlFor="email">
+                Email Address
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full p-3.5 bg-[#FAF6F0] border border-[#EADBCE] rounded-xl text-sm focus:outline-none focus:border-[#C84B31] focus:ring-1 focus:ring-[#C84B31] text-gray-800 transition"
+                placeholder="e.g. ramesh@example.com"
+                required
+              />
+              {errors.email && <p className="text-[#C84B31] text-xs mt-1">{errors.email}</p>}
+            </div>
 
-        {/* Phone / WhatsApp Input */}
-        <div className="mb-4">
-          <label
-            className="block text-lg font-medium text-gray-700"
-            htmlFor="phone"
-          >
-            Phone / WhatsApp Number
-          </label>
-          <input
-            type="tel"
-            id="phone"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg mt-2 focus:outline-none focus:ring-2 focus:ring-green-600"
-            placeholder="e.g. +91 98765 43210"
-          />
-        </div>
+            {/* Phone / WhatsApp Input */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1" htmlFor="phone">
+                WhatsApp / Phone Number
+              </label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                className="w-full p-3.5 bg-[#FAF6F0] border border-[#EADBCE] rounded-xl text-sm focus:outline-none focus:border-[#C84B31] focus:ring-1 focus:ring-[#C84B31] text-gray-800 transition"
+                placeholder="e.g. +91 98765 43210"
+              />
+            </div>
 
-        {/* Service Selection */}
-        <div className="mb-4">
-          <label
-            className="block text-lg font-medium text-gray-700"
-            htmlFor="service"
-          >
-            Select Service
-          </label>
-          <select
-            id="service"
-            name="service"
-            value={formData.service}
-            onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg mt-2 focus:outline-none focus:ring-2 focus:ring-green-600"
-            required
-          >
-            <option value="">Choose your adventure</option>
-            <option value="Camping">Camping</option>
-            <option value="Trekking">Trekking</option>
-            <option value="Guided Tour">Guided Tour</option>
-          </select>
-          {errors.service && <p className="text-red-500 text-sm mt-1">{errors.service}</p>}
-        </div>
+            {/* Service Selection */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1" htmlFor="service">
+                Choose Expedition / Trail
+              </label>
+              <select
+                id="service"
+                name="service"
+                value={formData.service}
+                onChange={handleChange}
+                className="w-full p-3.5 bg-[#FAF6F0] border border-[#EADBCE] rounded-xl text-sm focus:outline-none focus:border-[#C84B31] focus:ring-1 focus:ring-[#C84B31] text-gray-800 transition"
+                required
+              >
+                <option value="">Select your trail or campsite</option>
+                <option value="Saroda Dadar Weekend Camp">Saroda Dadar Weekend Camp (₹2,499)</option>
+                <option value="Maikal Forest Guided Trek">Maikal Forest Guided Trek (₹1,299)</option>
+                <option value="Bhoramdev Valley Trek & Heritage">Bhoramdev Valley Trek & Heritage (₹3,200)</option>
+                <option value="Kanger Valley & Caves Exploration">Kanger Valley & Caves Exploration (₹1,799)</option>
+                <option value="Chitrakote Falls Night Safari">Chitrakote Falls Night Safari (₹4,500)</option>
+                <option value="River Kayaking & Water Adventures">River Kayaking & Water Adventures (₹1,499)</option>
+                <option value="Custom Dandakaranya Expedition">Custom Dandakaranya Expedition</option>
+              </select>
+              {errors.service && <p className="text-[#C84B31] text-xs mt-1">{errors.service}</p>}
+            </div>
 
-        {/* Date Picker */}
-        <div className="mb-4">
-          <label
-            className="block text-lg font-medium text-gray-700"
-            htmlFor="date"
-          >
-            Preferred Date
-          </label>
-          <input
-            type="date"
-            id="date"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg mt-2 focus:outline-none focus:ring-2 focus:ring-green-600"
-            required
-          />
-          {errors.date && <p className="text-red-500 text-sm mt-1">{errors.date}</p>}
-        </div>
+            {/* Date Picker */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1" htmlFor="date">
+                Preferred Travel Date
+              </label>
+              <input
+                type="date"
+                id="date"
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+                min={new Date().toISOString().split('T')[0]}
+                className="w-full p-3.5 bg-[#FAF6F0] border border-[#EADBCE] rounded-xl text-sm focus:outline-none focus:border-[#C84B31] focus:ring-1 focus:ring-[#C84B31] text-gray-800 transition"
+                required
+              />
+              {errors.date && <p className="text-[#C84B31] text-xs mt-1">{errors.date}</p>}
+            </div>
 
-        {/* Submit Button */}
-        <div className="flex justify-center mt-6">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`px-8 py-3 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600 transition duration-300 ${
-              isSubmitting ? 'opacity-60 cursor-not-allowed' : ''
-            }`}
-          >
-            {isSubmitting ? 'Submitting Booking...' : 'Book Now'}
-          </button>
+            {/* Submit Button */}
+            <div className="pt-4">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`w-full py-4 bg-[#C84B31] hover:bg-[#9E321C] text-white font-bold rounded-xl shadow-lg transition duration-200 ${
+                  isSubmitting ? 'opacity-60 cursor-not-allowed' : ''
+                }`}
+              >
+                {isSubmitting ? 'Confirming Expedition...' : 'Confirm Expedition Booking'}
+              </button>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
     </div>
   );
 };
