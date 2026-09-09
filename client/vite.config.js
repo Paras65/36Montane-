@@ -15,6 +15,18 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
+    sourcemap: false,
+    chunkSizeWarningLimit: 650,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-core': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-map': ['leaflet'],
+          'vendor-icons': ['@fortawesome/react-fontawesome', '@fortawesome/free-solid-svg-icons', 'react-icons'],
+          'vendor-utils': ['date-fns', 'libphonenumber-js', 'qrcode'],
+        },
+      },
+    },
   },
 })
 

@@ -46,3 +46,4 @@ export const safeFetchJson = async (url, options = {}, fallback = null) => {
     return fallback;
   }
 };
+
