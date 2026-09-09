@@ -1,7 +1,7 @@
 // offlineFallback.js - Responsive mock data layer when MongoDB is not connected
 const jwt = require('jsonwebtoken');
 const { getIsConnected } = require('../config/db');
-const { trips, services, events, galleryItems, articles, bookings, contacts } = require('../data/seedData');
+const { trips, services, events, galleryItems, articles, bookings, contacts, reviews } = require('../data/seedData');
 
 const getJwtSecret = () => process.env.JWT_SECRET || '36montane_super_secret_jwt_key_2026';
 
@@ -13,6 +13,7 @@ let inMemoryGallery = galleryItems.map(g => ({ ...g }));
 let inMemoryArticles = articles.map(a => ({ ...a }));
 let inMemoryBookings = bookings.map(b => ({ ...b }));
 let inMemoryContacts = contacts.map(c => ({ ...c }));
+let inMemoryReviews = (reviews || []).map(r => ({ ...r }));
 
 const verifyAuth = (req) => {
   let token = req.header('Authorization');
@@ -35,11 +36,11 @@ const offlineFallback = (req, res, next) => {
 
   // Protected administrative route check
   const isProtectedAdminRoute =
-    (method === 'GET' && (path === '/contacts' || path === '/bookings')) ||
+    (method === 'GET' && (path === '/contacts' || path === '/bookings' || path === '/reviews/all')) ||
     (method === 'POST' && ['/addtrip', '/services', '/event', '/articles', '/gallery/type', '/addtrek'].includes(path)) ||
     (method === 'PUT' && (path.startsWith('/trips/') || path.startsWith('/services/') || path.startsWith('/events/') || path.startsWith('/articles/'))) ||
-    (method === 'PATCH' && path.startsWith('/bookings/')) ||
-    (method === 'DELETE' && (path.startsWith('/trips/') || path.startsWith('/services/') || path.startsWith('/events/') || path.startsWith('/articles/') || path.startsWith('/gallery/') || path.startsWith('/contacts/') || path.startsWith('/bookings/')));
+    (method === 'PATCH' && (path.startsWith('/bookings/') || path.startsWith('/reviews/'))) ||
+    (method === 'DELETE' && (path.startsWith('/trips/') || path.startsWith('/services/') || path.startsWith('/events/') || path.startsWith('/articles/') || path.startsWith('/gallery/') || path.startsWith('/contacts/') || path.startsWith('/bookings/') || path.startsWith('/reviews/')));
 
   if (isProtectedAdminRoute && !verifyAuth(req)) {
     return res.status(401).json({ message: 'Authentication required for administrative actions' });
@@ -313,6 +314,91 @@ const offlineFallback = (req, res, next) => {
     const id = path.replace('/bookings/', '');
     inMemoryBookings = inMemoryBookings.filter(b => b._id !== id);
     return res.status(200).json({ message: 'Booking deleted successfully', id });
+  }
+
+  // --- REVIEWS / STORIES ---
+  // GET /reviews (Public approved reviews with stats)
+  if (method === 'GET' && path === '/reviews') {
+    const approved = inMemoryReviews.filter(r => r.isApproved !== false);
+    const totalReviews = approved.length;
+    let averageRating = 5.0;
+    const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+
+    if (totalReviews > 0) {
+      const sum = approved.reduce((acc, r) => {
+        const star = Math.min(Math.max(Math.round(r.rating || 5), 1), 5);
+        distribution[star] = (distribution[star] || 0) + 1;
+        return acc + (r.rating || 5);
+      }, 0);
+      averageRating = Number((sum / totalReviews).toFixed(1));
+    }
+
+    return res.status(200).json({
+      reviews: approved,
+      stats: {
+        totalReviews,
+        averageRating,
+        distribution,
+      },
+    });
+  }
+
+  // GET /reviews/all (Admin all reviews)
+  if (method === 'GET' && path === '/reviews/all') {
+    return res.status(200).json(inMemoryReviews);
+  }
+
+  // POST /reviews (Submit new review)
+  if (method === 'POST' && path === '/reviews') {
+    const { name, location, tripTitle, rating, comment, photoUrl, travelDate } = body;
+    if (!name || !tripTitle || !comment) {
+      return res.status(400).json({ message: 'Name, expedition title, and feedback are required.' });
+    }
+    const newRev = {
+      _id: `6581f1b2c45e1234567890${Date.now().toString().slice(-4)}`,
+      name: name.trim(),
+      location: location ? location.trim() : 'Chhattisgarh',
+      tripTitle: tripTitle.trim(),
+      rating: Number(rating) || 5,
+      comment: comment.trim(),
+      photoUrl: photoUrl || '',
+      travelDate: travelDate || new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+      badge: 'Verified Trekker',
+      isApproved: true,
+      likes: 0,
+      createdAt: new Date(),
+    };
+    inMemoryReviews.unshift(newRev);
+    return res.status(201).json(newRev);
+  }
+
+  // POST /reviews/:id/like (Increment like)
+  if (method === 'POST' && path.startsWith('/reviews/') && path.endsWith('/like')) {
+    const id = path.replace('/reviews/', '').replace('/like', '');
+    const rev = inMemoryReviews.find(r => r._id === id);
+    if (!rev) return res.status(404).json({ message: 'Review not found' });
+    rev.likes = (rev.likes || 0) + 1;
+    return res.status(200).json({ id: rev._id, likes: rev.likes });
+  }
+
+  // PATCH /reviews/:id/status (Toggle approval)
+  if (method === 'PATCH' && path.startsWith('/reviews/') && path.endsWith('/status')) {
+    const id = path.replace('/reviews/', '').replace('/status', '');
+    const rev = inMemoryReviews.find(r => r._id === id);
+    if (!rev) return res.status(404).json({ message: 'Review not found' });
+    if (typeof body.isApproved === 'boolean') {
+      rev.isApproved = body.isApproved;
+    } else {
+      rev.isApproved = !rev.isApproved;
+    }
+    return res.status(200).json(rev);
+  }
+
+  // DELETE /reviews/:id (Delete review)
+  if (method === 'DELETE' && path.startsWith('/reviews/')) {
+    const id = path.replace('/reviews/', '');
+    inMemoryReviews = inMemoryReviews.filter(r => r._id !== id);
+    return res.status(200).json({ message: 'Review deleted successfully', id });
   }
 
   // Pass any unhandled requests to next router

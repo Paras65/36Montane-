@@ -85,6 +85,14 @@ const Navbar = () => {
               <span>🗺️</span>
               <span>Trail Map</span>
             </a>
+            <a
+              href="/home#trekker-stories"
+              className="hidden 2xl:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-400/30 transition"
+              title="Read verified trekker photo stories & reviews"
+            >
+              <span>⭐</span>
+              <span>Stories</span>
+            </a>
             <NavLink
               to="/service"
               className="px-4 py-2 bg-gradient-to-r from-[#C84B31] to-[#9E321C] hover:from-[#D95338] hover:to-[#B8391B] text-white text-xs font-bold rounded-xl shadow-md shadow-black/30 border border-amber-400/30 transition hover:scale-105 flex items-center gap-1.5"

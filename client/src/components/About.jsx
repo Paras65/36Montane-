@@ -1,35 +1,8 @@
 import React from "react";
-import Testimonial from "./Testimonial";
+import TrekkerStories from "./TrekkerStories";
 import { Link } from "react-router-dom";
 import { FaTree, FaCampground, FaHandsHelping, FaShieldAlt } from "react-icons/fa";
 import { getOwnerWhatsAppNumber } from "../utils/whatsapp";
-
-const testimonials = [
-  {
-    name: "Aarav Mehta",
-    text: "Camping at Saroda Dadar under the open starry sky was pure magic. Waking up to misty valleys and hot Chhattisgarhi breakfast prepared by local Baiga cooks was an experience no luxury resort can match.",
-    location: "Raipur, Chhattisgarh",
-    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80"
-  },
-  {
-    name: "Pooja & Rohan Deshmukh",
-    text: "We always thought of Himachal or Uttarakhand for trekking, but Chhattisgarh completely blew us away! The ancient Sal forests of Kanger Valley, the hidden limestone caves, and Chitrakote's roar are truly world-class.",
-    location: "Bengaluru, Karnataka",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80"
-  },
-  {
-    name: "Dr. Vikram Sen",
-    text: "The Bhoramdev heritage trail and Maikal ridge hike combined centuries of history with thrilling wilderness. 36 Montane's deep respect for local tribal communities and Leave No Trace principles is commendable.",
-    location: "New Delhi",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80"
-  },
-  {
-    name: "Sneha Patel",
-    text: "The night camping with campfire Chhattisgarhi rasoi (Chana dal pitha, roasted corn, and fresh forest herbal tea) was the highlight of our winter trip. Jai Johar to Paras and the entire guide team!",
-    location: "Pune, Maharashtra",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80"
-  }
-];
 
 const teamMembers = [
   {
@@ -225,29 +198,10 @@ const AboutUs = () => {
             </div>
           </div>
         </div>
-
-        {/* Testimonials Header */}
-        <div className="text-center mb-8">
-          <span className="text-xs uppercase tracking-widest text-[#C84B31] font-semibold">VOICES FROM THE TRAIL</span>
-          <h3 className="text-3xl md:text-4xl font-bold font-serif text-[#1B4332] mt-1">
-            What Explorers Say
-          </h3>
-          <p className="text-sm text-gray-600 mt-2">Unfiltered stories from travelers who ventured into Chhattisgarh with 36 Montane</p>
-        </div>
       </section>
 
-      {/* Testimonials Grid/List */}
-      <section className="pb-20">
-        {testimonials.map((testimonial, index) => (
-          <Testimonial
-            key={index}
-            name={testimonial.name}
-            text={testimonial.text}
-            location={testimonial.location}
-            image={testimonial.image}
-          />
-        ))}
-      </section>
+      {/* Verified Trekker Stories & Community Wall */}
+      <TrekkerStories />
     </div>
   );
 };

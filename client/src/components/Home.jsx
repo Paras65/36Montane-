@@ -18,6 +18,7 @@ import CustomTripSection from "./CustomTripSelection";
 import LiveWeather from "./LiveWeather";
 import TrailMap from "./TrailMap";
 import UpcomingBatches from "./UpcomingBatches";
+import TrekkerStories from "./TrekkerStories";
 import { mockFeaturedTrips, mockServices } from "../data/mockData";
 import { getOwnerWhatsAppNumber } from "../utils/whatsapp";
 
@@ -404,7 +405,10 @@ const Homepage = () => {
         </div>
       </section>
 
-      {/* ==================== 6. CUSTOM EXPEDITION BANNER ==================== */}
+      {/* ==================== 6. VERIFIED TREKKER STORIES & COMMUNITY WALL ==================== */}
+      <TrekkerStories />
+
+      {/* ==================== 7. CUSTOM EXPEDITION BANNER ==================== */}
       <section className="py-16 bg-[#11261D] text-amber-100 border-t border-[#2D6A4F]/50">
         <div className="container mx-auto px-4 text-center max-w-4xl">
           <span className="text-2xl mb-2 block">🌾</span>

@@ -17,6 +17,7 @@ const AdminDashboard = () => {
   const [articles, setArticles] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [contacts, setContacts] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const [health, setHealth] = useState(null);
 
   // Search filter
@@ -187,6 +188,7 @@ const AdminDashboard = () => {
         articlesRes,
         galleryRes,
         contactsRes,
+        reviewsRes,
         healthRes,
       ] = await Promise.all([
         authFetch(`${baseUrl}/api/featuredtrips`).catch(() => null),
@@ -196,6 +198,7 @@ const AdminDashboard = () => {
         authFetch(`${baseUrl}/api/articles`).catch(() => null),
         authFetch(`${baseUrl}/api/gallery/type`).catch(() => null),
         authFetch(`${baseUrl}/api/contacts`).catch(() => null),
+        authFetch(`${baseUrl}/api/reviews/all`).catch(() => null),
         authFetch(`${baseUrl}/api/health`).catch(() => null),
       ]);
 
@@ -206,6 +209,10 @@ const AdminDashboard = () => {
       if (articlesRes?.ok) setArticles(await articlesRes.json());
       if (galleryRes?.ok) setGallery(await galleryRes.json());
       if (contactsRes?.ok) setContacts(await contactsRes.json());
+      if (reviewsRes?.ok) {
+        const revData = await reviewsRes.json();
+        setReviews(Array.isArray(revData) ? revData : revData.reviews || []);
+      }
       if (healthRes?.ok) setHealth(await healthRes.json());
     } catch (err) {
       console.error('Error fetching admin data:', err);
@@ -521,6 +528,35 @@ const AdminDashboard = () => {
     }
   };
 
+  // --- REVIEWS / STORIES ACTIONS ---
+  const handleToggleReviewStatus = async (id, currentStatus) => {
+    try {
+      const res = await authFetch(`${baseUrl}/api/reviews/${id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isApproved: !currentStatus }),
+      });
+      if (!res.ok) throw new Error('Failed to update review status');
+      const updated = await res.json();
+      setReviews(reviews.map((r) => (r._id === id ? { ...r, isApproved: updated.isApproved } : r)));
+      showNotification(`Review marked as ${updated.isApproved ? 'Approved & Visible' : 'Hidden'}`);
+    } catch (err) {
+      showNotification(err.message, 'error');
+    }
+  };
+
+  const handleDeleteReview = async (id) => {
+    if (!window.confirm('Are you sure you want to permanently delete this trekker review?')) return;
+    try {
+      const res = await authFetch(`${baseUrl}/api/reviews/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to delete review');
+      setReviews(reviews.filter((r) => r._id !== id));
+      showNotification('Review deleted successfully');
+    } catch (err) {
+      showNotification(err.message, 'error');
+    }
+  };
+
   const navItems = [
     { id: 'overview', label: 'Overview', icon: '📊', count: null },
     { id: 'trips', label: 'Trips', icon: '🏔️', count: trips.length },
@@ -530,6 +566,7 @@ const AdminDashboard = () => {
     { id: 'articles', label: 'Articles', icon: '📝', count: articles.length },
     { id: 'gallery', label: 'Gallery', icon: '📸', count: gallery.length },
     { id: 'inquiries', label: 'Inquiries', icon: '📬', count: contacts.length },
+    { id: 'reviews', label: 'Reviews', icon: '⭐', count: reviews.length },
   ];
 
   return (
@@ -722,6 +759,18 @@ const AdminDashboard = () => {
                 </div>
                 <p className="text-2xl font-bold text-white mt-2">{contacts.length}</p>
                 <p className="text-xs text-slate-400 mt-0.5">Inquiries</p>
+              </div>
+
+              <div
+                onClick={() => setActiveTab('reviews')}
+                className="cursor-pointer bg-slate-900/80 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/50 p-4 rounded-2xl transition shadow-sm"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl">⭐</span>
+                  <span className="text-xs font-semibold text-amber-400">View</span>
+                </div>
+                <p className="text-2xl font-bold text-white mt-2">{reviews.length}</p>
+                <p className="text-xs text-slate-400 mt-0.5">Stories & Reviews</p>
               </div>
             </div>
 
@@ -1265,6 +1314,134 @@ const AdminDashboard = () => {
                   </div>
                 </div>
               ))
+            )}
+          </div>
+        )}
+
+        {/* ==================== 9. REVIEWS & STORIES TAB ==================== */}
+        {activeTab === 'reviews' && (
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/60 p-5 rounded-2xl border border-slate-800">
+              <div>
+                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                  <span>⭐</span>
+                  <span>Trekker Stories & Reviews Moderation</span>
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">
+                  Manage traveler testimonials, toggle public visibility, or remove outdated reviews.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="px-3 py-1.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold rounded-xl">
+                  {reviews.filter((r) => r.isApproved !== false).length} Approved & Live
+                </span>
+                <span className="px-3 py-1.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-bold rounded-xl">
+                  {reviews.filter((r) => r.isApproved === false).length} Hidden
+                </span>
+              </div>
+            </div>
+
+            {reviews.length === 0 ? (
+              <p className="text-xs text-slate-500 py-12 text-center">No trekker reviews or stories found</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {reviews.map((rev) => {
+                  const isApproved = rev.isApproved !== false;
+                  return (
+                    <div
+                      key={rev._id}
+                      className={`p-5 rounded-2xl border transition-all flex flex-col justify-between ${
+                        isApproved
+                          ? 'bg-slate-900/80 border-slate-800'
+                          : 'bg-slate-950/70 border-amber-500/30'
+                      }`}
+                    >
+                      <div>
+                        {/* Header info */}
+                        <div className="flex items-start justify-between gap-3 mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 text-amber-400 font-bold text-sm flex items-center justify-center">
+                              {(rev.name || 'T')[0].toUpperCase()}
+                            </div>
+                            <div>
+                              <h4 className="font-bold text-white text-sm">{rev.name}</h4>
+                              <p className="text-xs text-slate-400">
+                                {rev.location || 'Chhattisgarh'} • {rev.travelDate || 'Recent'}
+                              </p>
+                            </div>
+                          </div>
+
+                          <span
+                            className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
+                              isApproved
+                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                                : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                            }`}
+                          >
+                            {isApproved ? '✓ Live on Site' : 'Hidden'}
+                          </span>
+                        </div>
+
+                        {/* Expedition & Stars */}
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-amber-400 text-sm">
+                            {'★'.repeat(rev.rating || 5)}{'☆'.repeat(Math.max(0, 5 - (rev.rating || 5)))}
+                          </span>
+                          <span className="text-xs font-semibold text-emerald-400 bg-emerald-950/60 border border-emerald-800/40 px-2 py-0.5 rounded-md">
+                            {rev.tripTitle}
+                          </span>
+                        </div>
+
+                        {/* Comment text */}
+                        <p className="text-xs sm:text-sm text-slate-300 italic mb-3 leading-relaxed">
+                          "{rev.comment}"
+                        </p>
+
+                        {/* Attached Photo Thumbnail */}
+                        {rev.photoUrl && (
+                          <div className="relative h-32 w-full rounded-xl overflow-hidden mb-3 bg-slate-950 border border-slate-800">
+                            <img
+                              src={rev.photoUrl}
+                              alt="Review trail photo"
+                              className="w-full h-full object-cover"
+                            />
+                            <span className="absolute bottom-2 right-2 text-[10px] bg-black/70 backdrop-blur-md px-2 py-0.5 rounded text-white font-medium">
+                              📸 Trail Photo
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Footer Actions */}
+                      <div className="flex items-center justify-between pt-3 border-t border-slate-800 text-xs">
+                        <span className="text-slate-500 text-xs flex items-center gap-1">
+                          <span>❤️</span>
+                          <span>{rev.likes || 0} Helpful Votes</span>
+                        </span>
+
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleToggleReviewStatus(rev._id, isApproved)}
+                            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
+                              isApproved
+                                ? 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                                : 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                            }`}
+                          >
+                            {isApproved ? 'Hide from Public' : 'Approve & Publish'}
+                          </button>
+                          <button
+                            onClick={() => handleDeleteReview(rev._id)}
+                            className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs rounded-xl transition"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             )}
           </div>
         )}

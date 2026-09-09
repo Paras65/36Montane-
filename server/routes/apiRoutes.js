@@ -55,6 +55,23 @@ router.post('/booking', createBooking);
 router.patch('/bookings/:id/status', authMiddleware, updateBookingStatus);
 router.delete('/bookings/:id', authMiddleware, deleteBooking);
 
+const {
+  getApprovedReviews,
+  getAllReviewsAdmin,
+  createReview,
+  updateReviewStatus,
+  likeReview,
+  deleteReview,
+} = require('../controller/reviewController');
+
+// Reviews / Trekker Stories (Public Reads, Public Submissions & Likes, Admin Moderation)
+router.get('/reviews', getApprovedReviews);
+router.get('/reviews/all', authMiddleware, getAllReviewsAdmin);
+router.post('/reviews', createReview);
+router.post('/reviews/:id/like', likeReview);
+router.patch('/reviews/:id/status', authMiddleware, updateReviewStatus);
+router.delete('/reviews/:id', authMiddleware, deleteReview);
+
 // Legacy Treks endpoints (preserved for compatibility)
 router.get('/treks', getAllTrek);
 router.get('/trek/:id', getTrekById);

@@ -118,3 +118,13 @@ I have initiated the UPI token advance for my slot. Attached is the payment conf
   return `https://wa.me/${ownerNumber}?text=${encodeURIComponent(text)}`;
 };
 
+/**
+ * Generates custom inquiry click-to-chat URL for general questions
+ */
+export const generateInquiryWhatsAppUrl = (subject = 'Trail Inquiry') => {
+  const ownerNumber = getOwnerWhatsAppNumber();
+  const text = `Jai Johar! I am exploring Chhattisgarh expeditions on 36 Montane and have questions regarding ${subject}. Could you share more details?`;
+  return `https://wa.me/${ownerNumber}?text=${encodeURIComponent(text)}`;
+};
+
+

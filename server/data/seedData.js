@@ -223,6 +223,93 @@ const contacts = [
   }
 ];
 
+const reviews = [
+  {
+    _id: "6581f1b2c45e123456789071",
+    name: "Aarav Sharma",
+    location: "Raipur, Chhattisgarh",
+    tripTitle: "Saroda Dadar Forest Trail & Camp",
+    rating: 5,
+    comment: "The campfire acoustic music under the star-studded Milky Way and the freshly cooked hot Angakar Roti with tomato chutney was unreal. Our local guide Manglu knew every forest trail by heart. Cannot recommend 36 Montane enough!",
+    photoUrl: "https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=800&q=80",
+    badge: "Verified Trekker",
+    travelDate: "Aug 2026",
+    isApproved: true,
+    likes: 34,
+    createdAt: new Date("2026-08-28T10:00:00Z")
+  },
+  {
+    _id: "6581f1b2c45e123456789072",
+    name: "Devika Nair",
+    location: "Bengaluru, Karnataka",
+    tripTitle: "Bastar Secret Waterfalls Expedition",
+    rating: 5,
+    comment: "As a solo female traveler, safety was my #1 concern. The 36 Montane crew met me directly at Jagdalpur station and looked after everything. Trekking through the sal canopy to hidden cascades where not a single tourist was around was breathtaking!",
+    photoUrl: "https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=800&q=80",
+    badge: "Verified Trekker",
+    travelDate: "Aug 2026",
+    isApproved: true,
+    likes: 42,
+    createdAt: new Date("2026-08-30T14:30:00Z")
+  },
+  {
+    _id: "6581f1b2c45e123456789073",
+    name: "Vikramaditya Sahu",
+    location: "Bhilai, Chhattisgarh",
+    tripTitle: "Corporate Team Offsite & Plateau Camp",
+    rating: 5,
+    comment: "We brought our 24-person engineering team for a 2-day wilderness offsite. Zero mobile network forced everyone to genuinely connect. Jungle survival challenges, tent pitching, and team bonfire discussions made this the best retreat we've ever had.",
+    photoUrl: "https://images.unsplash.com/photo-1523906834658-6e2b32c950cb?auto=format&fit=crop&w=800&q=80",
+    badge: "Corporate Lead",
+    travelDate: "Sep 2026",
+    isApproved: true,
+    likes: 29,
+    createdAt: new Date("2026-09-02T09:15:00Z")
+  },
+  {
+    _id: "6581f1b2c45e123456789074",
+    name: "Rohan & Sneha Mukherjee",
+    location: "Kolkata, West Bengal",
+    tripTitle: "Bhoramdev Valley Trek & Heritage",
+    rating: 5,
+    comment: "Visiting the 11th-century stone temple at sunrise and then hiking up into the Maikal hills was pure magic. Clean high-altitude tents, immaculate eco-friendly bio-toilets, and zero plastic on the trail. True sustainable travel.",
+    photoUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+    badge: "Verified Trekker",
+    travelDate: "Jul 2026",
+    isApproved: true,
+    likes: 19,
+    createdAt: new Date("2026-07-22T16:00:00Z")
+  },
+  {
+    _id: "6581f1b2c45e123456789075",
+    name: "Kavita Rao",
+    location: "Hyderabad, Telangana",
+    tripTitle: "Maikal Hills Ridge Expedition",
+    rating: 5,
+    comment: "The monsoon mist swirling over the ridge lines was otherworldly! The elevation gain was challenging, but the summit ridge viewpoint made every droplet of sweat worth it. The emergency backup protocols and first aid readiness were top notch.",
+    photoUrl: "https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?auto=format&fit=crop&w=800&q=80",
+    badge: "Verified Trekker",
+    travelDate: "Aug 2026",
+    isApproved: true,
+    likes: 25,
+    createdAt: new Date("2026-08-14T11:45:00Z")
+  },
+  {
+    _id: "6581f1b2c45e123456789076",
+    name: "Tanmay Dewangan",
+    location: "Bilaspur, Chhattisgarh",
+    tripTitle: "Kanger Valley Caves & Wildlife Trail",
+    rating: 5,
+    comment: "Navigating the limestone stalactite formations with high-lumen headlamps was pure adventure. The guides are indigenous locals who respect the forest and explain tribal folklore. Proud to see this level of eco-trekking in my home state!",
+    photoUrl: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+    badge: "Verified Trekker",
+    travelDate: "Sep 2026",
+    isApproved: true,
+    likes: 31,
+    createdAt: new Date("2026-09-04T18:20:00Z")
+  }
+];
+
 module.exports = {
   trips,
   services,
@@ -230,6 +317,8 @@ module.exports = {
   galleryItems,
   articles,
   bookings,
-  contacts
+  contacts,
+  reviews
 };
+
 
