@@ -3,6 +3,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaWhatsapp, FaInstagram, FaFacebook } from "react-icons/fa";
+import { getOwnerWhatsAppNumber } from "../utils/whatsapp";
 
 function Footer() {
   return (
@@ -111,7 +112,7 @@ function Footer() {
               </p>
               <p className="flex items-center gap-3">
                 <FaPhoneAlt className="text-[#D4A373] shrink-0" />
-                <a href="tel:+918770281696" className="hover:text-[#E9C46A] transition">+91 87702 81696</a>
+                <a href={`tel:+${getOwnerWhatsAppNumber()}`} className="hover:text-[#E9C46A] transition">+91 96693 24552</a>
               </p>
               <p className="flex items-center gap-3">
                 <FaEnvelope className="text-[#D4A373] shrink-0" />
@@ -120,7 +121,9 @@ function Footer() {
             </div>
 
             <a
-              href="https://wa.me/918770281696?text=Jai%20Johar!%20I%20want%20to%20know%20more%20about%20trekking%20with%2036%20Montane."
+              href={`https://wa.me/${getOwnerWhatsAppNumber()}?text=${encodeURIComponent(
+                "Jai Johar! I want to know more about trekking with 36 Montane."
+              )}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-[#25D366] hover:bg-[#1ebe5b] text-white font-bold rounded-xl text-xs transition shadow-lg hover:scale-[1.02]"

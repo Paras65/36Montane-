@@ -19,7 +19,7 @@ export const cleanPhoneNumber = (phone) => {
  */
 export const getOwnerWhatsAppNumber = () => {
   const envNumber = import.meta.env.VITE_OWNER_WHATSAPP;
-  return cleanPhoneNumber(envNumber || '919876543210');
+  return cleanPhoneNumber(envNumber || '919669324552');
 };
 
 /**
@@ -94,7 +94,7 @@ How can we assist you with your upcoming trekking or camping journey? 🏔️⛺
  * Returns UPI ID configured in .env or fallback
  */
 export const getUpiId = () => {
-  return import.meta.env.VITE_UPI_ID || '36montane@upi';
+  return import.meta.env.VITE_UPI_ID || '9669324552@upi';
 };
 
 /**

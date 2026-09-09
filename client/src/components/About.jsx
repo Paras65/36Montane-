@@ -2,6 +2,7 @@ import React from "react";
 import Testimonial from "./Testimonial";
 import { Link } from "react-router-dom";
 import { FaTree, FaCampground, FaHandsHelping, FaShieldAlt } from "react-icons/fa";
+import { getOwnerWhatsAppNumber } from "../utils/whatsapp";
 
 const testimonials = [
   {
@@ -211,7 +212,9 @@ const AboutUs = () => {
                 Explore Upcoming Expeditions
               </Link>
               <a
-                href="https://wa.me/918770281696?text=Jai%20Johar!%20I%20want%20to%20plan%20a%20trip%20with%2036%20Montane."
+                href={`https://wa.me/${getOwnerWhatsAppNumber()}?text=${encodeURIComponent(
+                  "Jai Johar! I want to plan a trip with 36 Montane."
+                )}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-8 py-3.5 bg-[#25D366] hover:bg-[#1ebe5b] text-white font-bold rounded-xl shadow-lg transition-transform hover:scale-105 flex items-center gap-2"

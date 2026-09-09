@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { getOwnerWhatsAppNumber } from '../utils/whatsapp';
 
 // Fix default Leaflet marker icon asset paths
 delete L.Icon.Default.prototype._getIconUrl;
@@ -359,7 +360,7 @@ const TrailMap = () => {
                     🏕️ Book This Trail
                   </NavLink>
                   <a
-                    href={`https://wa.me/918770281696?text=${encodeURIComponent(
+                    href={`https://wa.me/${getOwnerWhatsAppNumber()}?text=${encodeURIComponent(
                       `Jai Johar! I am planning a trek to ${selectedTrail.name} (${selectedTrail.altitude}). What are the upcoming departure dates?`
                     )}`}
                     target="_blank"

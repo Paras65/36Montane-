@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaWhatsapp, FaClock } from "react-icons/fa";
+import { getOwnerWhatsAppNumber } from "../utils/whatsapp";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -200,7 +201,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <span className="font-bold text-gray-900 block text-xs uppercase tracking-wider">Direct Hotline</span>
-                    <a href="tel:+918770281696" className="text-xs text-[#C84B31] font-semibold hover:underline block mt-0.5">+91 87702 81696</a>
+                    <a href={`tel:+${getOwnerWhatsAppNumber()}`} className="text-xs text-[#C84B31] font-semibold hover:underline block mt-0.5">+91 96693 24552</a>
                   </div>
                 </div>
 
@@ -228,7 +229,9 @@ const Contact = () => {
               {/* Quick WhatsApp CTA Button */}
               <div className="mt-6 pt-5 border-t border-[#F0E5D3]">
                 <a
-                  href="https://wa.me/918770281696?text=Jai%20Johar!%20I%20have%20an%20inquiry%20regarding%20trekking%20with%2036%20Montane."
+                  href={`https://wa.me/${getOwnerWhatsAppNumber()}?text=${encodeURIComponent(
+                    "Jai Johar! I have an inquiry regarding trekking with 36 Montane."
+                  )}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-3 px-4 bg-[#25D366] hover:bg-[#1ebe5b] text-white font-bold rounded-xl flex items-center justify-center gap-2 text-xs shadow-md transition hover:scale-[1.02]"

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { FaTemperatureHigh, FaWind, FaTint, FaCloudRain, FaSyncAlt, FaWhatsapp, FaMapMarkerAlt } from 'react-icons/fa';
+import { getOwnerWhatsAppNumber } from '../utils/whatsapp';
 
 export const CHHATTISGARH_TRAIL_LOCATIONS = [
   {
@@ -137,7 +138,7 @@ const LiveWeather = ({ isCompact = false }) => {
     }
   }
 
-  const whatsappInquiryUrl = `https://wa.me/918770281696?text=${encodeURIComponent(
+  const whatsappInquiryUrl = `https://wa.me/${getOwnerWhatsAppNumber()}?text=${encodeURIComponent(
     `Jai Johar! What are the current trail and camping conditions at ${selectedLocation.name} right now?`
   )}`;
 
