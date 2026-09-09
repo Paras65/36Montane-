@@ -179,3 +179,4 @@ npm run seed
 2. Build command: `npm install`.
 3. Start command: `node main.js`.
 4. Add environment variables: `PORT=5000`, `MONGODB_URI=...`, `JWT_SECRET=...`, `initURL=https://your-frontend-domain.com`.
+
