@@ -45,7 +45,7 @@ app.use(generalLimiter);
 // Specialized Auth Brute-Force Rate Limiter (Relaxed in development to prevent lockouts)
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: process.env.NODE_ENV === 'production' ? 10 : 200,
+    max: process.env.NODE_ENV === 'production' ? 30 : 200,
     standardHeaders: true,
     legacyHeaders: false,
     message: { message: 'Too many authentication attempts from this IP. Please try again after 15 minutes.' },
@@ -82,8 +82,8 @@ app.use(cors({
             return callback(null, true);
         }
 
-        // Allow official 36 Montane Vercel deployments & preview branches
-        if (/^https?:\/\/(36-?montane[a-z0-9-]*|init[a-z0-9-]*|three6montane[a-z0-9-]*)\.vercel\.app$/i.test(origin)) {
+        // Allow Vercel deployments & preview branches (any .vercel.app)
+        if (/^https?:\/\/[a-zA-Z0-9-]+\.vercel\.app$/i.test(origin)) {
             return callback(null, true);
         }
 
@@ -100,7 +100,7 @@ app.use(cors({
         return callback(new Error(`Origin ${origin} not allowed by CORS`));
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 

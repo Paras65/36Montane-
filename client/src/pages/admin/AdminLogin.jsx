@@ -14,7 +14,7 @@ const AdminLogin = () => {
     setIsLoading(true);
 
     try {
-      const baseUrl = import.meta.env.VITE_API_URL || '';
+      const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
       const res = await fetch(`${baseUrl}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -44,7 +44,7 @@ const AdminLogin = () => {
     setError('');
 
     try {
-      const baseUrl = import.meta.env.VITE_API_URL || '';
+      const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
       const res = await fetch(`${baseUrl}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
