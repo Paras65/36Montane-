@@ -112,7 +112,7 @@ function Footer() {
               </p>
               <p className="flex items-center gap-3">
                 <FaPhoneAlt className="text-[#D4A373] shrink-0" />
-                <a href={`tel:+${getOwnerWhatsAppNumber()}`} className="hover:text-[#E9C46A] transition">+91 96693 24552</a>
+                <a href={`tel:+${getOwnerWhatsAppNumber()}`} className="hover:text-[#E9C46A] transition">+{getOwnerWhatsAppNumber()}</a>
               </p>
               <p className="flex items-center gap-3">
                 <FaEnvelope className="text-[#D4A373] shrink-0" />

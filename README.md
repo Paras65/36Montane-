@@ -71,7 +71,7 @@ Verify environment files:
   ```env
   PORT=5000
   MONGODB_URI=mongodb://localhost:27017/36montane
-  JWT_SECRET=36montane_super_secret_jwt_key_2026
+  JWT_SECRET=your_jwt_secret_key_here
   initURL=http://localhost:3000
   ```
 

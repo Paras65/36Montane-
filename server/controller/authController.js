@@ -2,12 +2,15 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+const crypto = require('crypto');
+const devFallbackSecret = crypto.randomBytes(32).toString('hex');
+
 const getJwtSecret = () => {
     const secret = process.env.JWT_SECRET;
     if (!secret && process.env.NODE_ENV === 'production') {
         throw new Error('CRITICAL SECURITY CONFIGURATION: JWT_SECRET environment variable must be set in production!');
     }
-    return secret || '36montane_super_secret_jwt_key_2026';
+    return secret || devFallbackSecret;
 };
 
 // Helper function to generate JWT

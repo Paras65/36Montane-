@@ -201,7 +201,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <span className="font-bold text-gray-900 block text-xs uppercase tracking-wider">Direct Hotline</span>
-                    <a href={`tel:+${getOwnerWhatsAppNumber()}`} className="text-xs text-[#C84B31] font-semibold hover:underline block mt-0.5">+91 96693 24552</a>
+                    <a href={`tel:+${getOwnerWhatsAppNumber()}`} className="text-xs text-[#C84B31] font-semibold hover:underline block mt-0.5">+{getOwnerWhatsAppNumber()}</a>
                   </div>
                 </div>
 

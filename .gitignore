@@ -8,10 +8,26 @@ dist/
 client/dist/
 build/
 
-# Environment Variables
+# Environment Variables & Secrets
 .env
+.env.*
+!.env.example
 client/.env
+client/.env.*
+!client/.env.example
 server/.env
+server/.env.*
+!server/.env.example
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+credentials.json
+service-account*.json
+*.sqlite
+*.sql
+*.dump
 
 # Logs
 *.log

@@ -3,7 +3,9 @@ const jwt = require('jsonwebtoken');
 const { getIsConnected } = require('../config/db');
 const { trips, services, events, galleryItems, articles, bookings, contacts, reviews } = require('../data/seedData');
 
-const getJwtSecret = () => process.env.JWT_SECRET || '36montane_super_secret_jwt_key_2026';
+const crypto = require('crypto');
+const devFallbackSecret = crypto.randomBytes(32).toString('hex');
+const getJwtSecret = () => process.env.JWT_SECRET || devFallbackSecret;
 
 // In-memory data store for offline development
 let inMemoryTrips = trips.map(t => ({ ...t }));

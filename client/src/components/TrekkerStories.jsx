@@ -439,7 +439,7 @@ const TrekkerStories = () => {
               className="px-6 py-3.5 bg-[#25D366] hover:bg-[#1ebe5b] text-white font-bold rounded-xl shadow-lg transition-transform hover:scale-105 flex items-center gap-2 text-sm sm:text-base"
             >
               <span>💬</span>
-              <span>WhatsApp Trail Lead (+91 96693 24552)</span>
+              <span>Chat with Trail Lead on WhatsApp</span>
             </a>
           </div>
         </div>
