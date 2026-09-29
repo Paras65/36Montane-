@@ -42,10 +42,10 @@ const generalLimiter = rateLimit({
 });
 app.use(generalLimiter);
 
-// Specialized Auth Brute-Force Rate Limiter
+// Specialized Auth Brute-Force Rate Limiter (Relaxed in development to prevent lockouts)
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 10,
+    max: process.env.NODE_ENV === 'production' ? 10 : 200,
     standardHeaders: true,
     legacyHeaders: false,
     message: { message: 'Too many authentication attempts from this IP. Please try again after 15 minutes.' },

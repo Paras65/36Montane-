@@ -96,9 +96,13 @@ const login = async (req, res) => {
 
         // Default admin fallback - ONLY allowed in non-production development environments
         if (!user) {
-            if (process.env.NODE_ENV !== 'production' && identifier === defaultAdminUser && password === defaultAdminPass) {
+            const isConfiguredAdmin = identifier === defaultAdminUser && password === defaultAdminPass;
+            const isStandardDemoAdmin = identifier === 'admin' && password === 'admin123';
+
+            if (process.env.NODE_ENV !== 'production' && (isConfiguredAdmin || isStandardDemoAdmin)) {
                 console.warn('⚠️ SECURITY WARNING: Logged in using development fallback admin credentials. Create a real database administrator for production.');
-                const dummyAdmin = { id: 'admin-001', username: defaultAdminUser, email: 'admin@36montane.com', role: 'admin', name: 'Administrator' };
+                const activeAdminName = isConfiguredAdmin ? defaultAdminUser : 'admin';
+                const dummyAdmin = { id: 'admin-001', username: activeAdminName, email: `${activeAdminName}@36montane.com`, role: 'admin', name: 'Administrator' };
                 const token = generateToken(dummyAdmin);
                 return res.json({ token, user: dummyAdmin });
             }
@@ -118,8 +122,9 @@ const login = async (req, res) => {
     } catch (err) {
         console.error('Login error:', err);
         // Fallback for development if database is unreachable
-        if (identifier === defaultAdminUser && password === defaultAdminPass) {
-            const dummyAdmin = { id: 'admin-001', username: defaultAdminUser, email: 'admin@36montane.com', role: 'admin', name: 'Administrator' };
+        if ((identifier === defaultAdminUser && password === defaultAdminPass) || (identifier === 'admin' && password === 'admin123')) {
+            const activeAdminName = identifier === defaultAdminUser ? defaultAdminUser : 'admin';
+            const dummyAdmin = { id: 'admin-001', username: activeAdminName, email: `${activeAdminName}@36montane.com`, role: 'admin', name: 'Administrator' };
             const token = generateToken(dummyAdmin);
             return res.json({ token, user: dummyAdmin });
         }

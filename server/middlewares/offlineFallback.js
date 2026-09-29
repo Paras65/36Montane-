@@ -49,13 +49,17 @@ const offlineFallback = (req, res, next) => {
   // --- AUTH FALLBACK ---
   if (path === '/auth/login' && method === 'POST') {
     const { username, email, password } = body;
-    const id = username || email;
-    if (id === 'admin' && password === 'admin123') {
-      const dummyUser = { id: 'admin-001', username: 'admin', email: 'admin@36montane.com', role: 'admin', name: 'Administrator' };
+    const id = (username || email || '').trim();
+    const defaultAdminUser = process.env.ADMIN_USERNAME || 'admin';
+    const defaultAdminPass = process.env.ADMIN_PASSWORD || 'admin123';
+
+    if ((id === defaultAdminUser && password === defaultAdminPass) || (id === 'admin' && password === 'admin123')) {
+      const activeAdminName = id === defaultAdminUser ? defaultAdminUser : 'admin';
+      const dummyUser = { id: 'admin-001', username: activeAdminName, email: `${activeAdminName}@36montane.com`, role: 'admin', name: 'Administrator' };
       const token = jwt.sign(dummyUser, getJwtSecret(), { expiresIn: '24h' });
       return res.status(200).json({ token, user: dummyUser });
     }
-    return res.status(400).json({ message: 'Invalid credentials. Use admin / admin123' });
+    return res.status(400).json({ message: 'Invalid credentials. Use admin / admin123 or configured credentials.' });
   }
 
   if (path === '/auth/me' && method === 'GET') {
