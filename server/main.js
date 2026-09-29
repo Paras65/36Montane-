@@ -31,7 +31,7 @@ app.use(helmet({
 app.use(xss());
 app.use(mongoSanitize());
 app.use(hpp());
-
+app.set('trust proxy', 1);
 // General Rate Limiting (Allows healthy browsing on shared networks while blocking DDoS)
 const generalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
